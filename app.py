@@ -12,10 +12,10 @@ from reportlab.lib import colors
 @st.cache_data
 def load_image(path):
     img = Image.open(path)
-    return img.resize((230,230))
+    return img.resize((130,130))
 
 
-st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="wide")
+st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="centered")
 
 
 # -----------------------------
@@ -146,11 +146,11 @@ for category, product_list in products.items():
 
             st.rerun()
 
-        cols = st.columns(3)
+        cols = st.columns(2)
 
         for i, product in enumerate(filtered_products):
 
-            with cols[i % 3]:
+            with cols[i % 2]:
 
                 # ANCHOR FOR JUMP
                 st.markdown(f"<a name='{product['name']}'></a>", unsafe_allow_html=True)
@@ -252,7 +252,7 @@ with st.sidebar:
                             ">
                                 <div style="font-weight:600;">{item}</div>
                                 <div style="
-                                    font-size:18px;
+                                    font-size:15px;
                                     color:#ffb84d;
                                     font-weight:600;
                                 ">
