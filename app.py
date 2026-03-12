@@ -235,7 +235,7 @@ for category, product_list in products.items():
 
                     img = load_image(product["image"])
 
-                    img_size = 150 if st.session_state.get("mobile", False) else 100
+                    img_size = 200 if st.session_state.get("mobile", False) else 100
                     
                     left_img, mid_img, right_img = st.columns([1,2,1])
 
@@ -247,7 +247,7 @@ for category, product_list in products.items():
                     if key not in st.session_state:
                         st.session_state[key] = 0
 
-                    c1, c2, c3 = st.columns([1,1,1])
+                    c1, c2, c3 = st.columns([0.5,1,0.5])
 
                     with c1:
 
@@ -271,7 +271,7 @@ for category, product_list in products.items():
                     with c2:
 
                         st.markdown(
-                            f"<p style='text-align:center;font-size:20px'>{st.session_state[key]}</p>",
+                            f"<p style='text-align:center;font-size:16px'>{st.session_state[key]}</p>",
                             unsafe_allow_html=True
                         )
 
