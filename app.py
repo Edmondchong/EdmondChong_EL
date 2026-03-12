@@ -16,6 +16,13 @@ def load_image(path):
 
 
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="wide")
+st.markdown("""
+<style>
+.block-container {
+    padding-top: 1rem;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # -----------------------------
 # Detect Mobile Screen Automatically
