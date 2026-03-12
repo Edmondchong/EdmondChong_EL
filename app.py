@@ -213,10 +213,11 @@ for category, product_list in products.items():
     filtered_products = []
 
     for product in product_list:
+
         product_name = product["name"].lower().replace("_"," ")
 
         if search:
-            if search.lower() in product_name:
+            if search in product_name:
                 filtered_products.append(product)
         else:
             filtered_products.append(product)
@@ -224,8 +225,21 @@ for category, product_list in products.items():
     if len(filtered_products) == 0:
         continue
 
-    with st.expander(category, expanded=bool(search)):
+    # -------------------------
+    # Remember Expander State
+    # -------------------------
+    expander_key = f"expander_{category}"
 
+    if expander_key not in st.session_state:
+        st.session_state[expander_key] = bool(search)
+
+    with st.expander(category, expanded=st.session_state[expander_key]):
+
+        st.session_state[expander_key] = True
+
+        # -------------------------
+        # Clear Category
+        # -------------------------
         if st.button(f"🧹 Clear {category}", key=f"clear_{category}"):
 
             for product in product_list:
@@ -238,7 +252,9 @@ for category, product_list in products.items():
 
             st.rerun()
 
+        # -------------------------
         # Responsive Columns
+        # -------------------------
         cols = st.columns(2) if st.session_state.get("mobile", False) else st.columns(3)
 
         for i, product in enumerate(filtered_products):
@@ -269,8 +285,6 @@ for category, product_list in products.items():
 
                     img = load_image(product["image"])
 
-                    img_size = 1000 if st.session_state.get("mobile", False) else 100
-                    
                     left_img, mid_img, right_img = st.columns([1,15,1])
 
                     with mid_img:
@@ -306,10 +320,10 @@ for category, product_list in products.items():
                                 st.rerun()
 
                     # -------------------
-                    # Editable Quantity
+                    # Quantity Input
                     # -------------------
                     with c2:
-                            
+
                         st.number_input(
                             "",
                             min_value=0,
@@ -337,7 +351,7 @@ for category, product_list in products.items():
                             use_container_width=True
                         ):
 
-                            if st.session_state[key] < 50:
+                            if st.session_state[key] < 250:
 
                                 st.session_state[key] += 1
                                 st.session_state.cart[product["name"]] = st.session_state[key]
