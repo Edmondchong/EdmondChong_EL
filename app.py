@@ -32,19 +32,17 @@ st.markdown("""
     font-weight:500;
 }
 
-/* Label paragraph */
 .stTextInput label p,
 .stDateInput label p {
     font-size:18px !important;
 }
 
-/* Input box text */
 .stTextInput input {
     font-size:18px !important;
 }
 
-/* SMALLER +/- BUTTONS */
-div.stButton > button {
+/* ONLY shrink + and - buttons */
+button[kind="secondary"] {
     height:35px;
     width:35px;
     font-size:18px;
