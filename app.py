@@ -278,6 +278,9 @@ for category, product_list in products.items():
 
                     c1, c2, c3 = st.columns([1,1,1])
 
+                    # -------------------
+                    # Minus Button
+                    # -------------------
                     with c1:
 
                         if st.button(
@@ -297,13 +300,35 @@ for category, product_list in products.items():
 
                                 st.rerun()
 
+                    # -------------------
+                    # Editable Quantity
+                    # -------------------
                     with c2:
 
-                        st.markdown(
-                            f"<p style='text-align:center;font-size:16px'>{st.session_state[key]}</p>",
-                            unsafe_allow_html=True
+                        new_qty = st.number_input(
+                            "",
+                            min_value=0,
+                            max_value=50,
+                            value=st.session_state[key],
+                            step=1,
+                            label_visibility="collapsed",
+                            key=f"input_{category}_{product['name']}"
                         )
 
+                        if new_qty != st.session_state[key]:
+
+                            st.session_state[key] = new_qty
+
+                            if new_qty > 0:
+                                st.session_state.cart[product["name"]] = new_qty
+                            elif product["name"] in st.session_state.cart:
+                                del st.session_state.cart[product["name"]]
+
+                            st.rerun()
+
+                    # -------------------
+                    # Plus Button
+                    # -------------------
                     with c3:
 
                         if st.button(
@@ -318,7 +343,6 @@ for category, product_list in products.items():
                                 st.session_state.cart[product["name"]] = st.session_state[key]
 
                                 st.rerun()
-
 
 # =========================
 # Mobile Sticky Cart Bar
