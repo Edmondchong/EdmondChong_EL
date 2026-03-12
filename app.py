@@ -234,7 +234,7 @@ for category, product_list in products.items():
 
                     img = load_image(product["image"])
 
-                    img_size = 120 if st.session_state.get("mobile", False) else 100
+                    img_size = 150 if st.session_state.get("mobile", False) else 100
                     
                     left_img, mid_img, right_img = st.columns([1,2,1])
 
