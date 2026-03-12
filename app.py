@@ -49,13 +49,7 @@ else:
     QTY_SIZE = 20
     BTN_HEIGHT = 38
     PADDING = 6
-
-if is_mobile:
-    CARD_PADDING = 12
-    CARD_RADIUS = 16
-else:
-    CARD_PADDING = 12
-    CARD_RADIUS = 16
+    
 # -----------------------------
 # UI Font Size
 # -----------------------------
@@ -261,11 +255,16 @@ for category, product_list in products.items():
                         st.markdown(
                             f"""
                             <div style="
-                                border:1px solid #333;
-                                border-radius:{CARD_RADIUS}px;
-                                padding:{CARD_PADDING}px;
-                                margin-bottom:10px;
+                                height:40px;
+                                font-size:{TITLE_SIZE}px;
+                                font-weight:700;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                text-align:center;
                             ">
+                            {product['name']}
+                            </div>
                             """,
                             unsafe_allow_html=True
                         )
