@@ -234,7 +234,7 @@ for category, product_list in products.items():
             st.rerun()
 
         # Responsive Columns
-        cols = st.columns(2) if st.session_state.get("mobile", False) else st.columns(3)
+        cols = st.columns(2) if st.session_state.get("mobile", False) else st.columns(2)
 
         for i, product in enumerate(filtered_products):
 
