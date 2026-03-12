@@ -601,7 +601,7 @@ with st.sidebar:
         
     st.divider()
 
-    st.subheader("Recent Orders")
+    st.subheader("Recent Orders:")
 
     if len(st.session_state.order_history) == 0:
 
