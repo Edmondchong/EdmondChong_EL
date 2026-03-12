@@ -62,34 +62,49 @@ st.markdown("""
     font-size:18px !important;
 }
 
-/* 2. FORCE HORIZONTAL LAYOUT ON MOBILE */
-/* This prevents the "stacking" behavior in your product cards */
+/* 2. FORCE HORIZONTAL LAYOUT & ALIGNMENT ON MOBILE */
 @media (max-width: 768px) {
-    /* Target the container that holds the columns */
-    div[data-testid="column"] {
-        width: unset !important;
-        flex: 1 1 0% !important;
-        min-width: 0px !important;
-    }
-
-    /* Force the parent horizontal block to not wrap */
+    /* Prevent columns from stacking and center them vertically */
     div[data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
-        align-items: center !important;
-        gap: 5px !important;
+        align-items: center !important; /* Forces vertical center */
+        gap: 8px !important;
     }
 
-    /* Make buttons smaller so they fit side-by-side */
+    /* Ensure each column content is also centered */
+    div[data-testid="column"] {
+        width: auto !important;
+        flex: 1 1 0% !important;
+        min-width: 0px !important;
+        display: flex !important;
+        align-items: center !important; 
+        justify-content: center !important;
+    }
+
+    /* FIX: Remove bottom margin from text that causes "floating" */
+    div[data-testid="stMarkdownContainer"] p {
+        margin-bottom: 0px !important;
+        line-height: 1.2 !important;
+    }
+
+    /* Make buttons uniform and centered */
     .stButton button {
-        padding: 0px 5px !important;
-        height: 35px !important;
+        padding: 0px !important;
+        height: 32px !important;
         width: 100% !important;
-        font-size: 14px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
-    /* Prevent the image from being squished */
+    /* Ensure image container doesn't add extra space */
+    div[data-testid="stImage"] {
+        display: flex !important;
+        align-items: center !important;
+    }
+    
     div[data-testid="stImage"] img {
         max-width: 60px !important;
         height: auto !important;
@@ -117,6 +132,7 @@ div[data-testid="stVerticalBlock"] > div {
 
 </style>
 """, unsafe_allow_html=True)
+
 
 # -----------------------------
 # Session Memory
