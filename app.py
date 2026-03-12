@@ -15,7 +15,7 @@ def load_image(path):
     return img.resize((1000,1000))
 
 
-st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="wide")
+st.set_page_config(page_title="(XLFM) Technical Team Equipment System", layout="wide")
 st.markdown("""
 <style>
 .block-container {
