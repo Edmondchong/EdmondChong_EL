@@ -27,6 +27,11 @@ st.markdown("""
 st.markdown("""
 <style>
 
+/* Center text inside number input */
+div[data-baseweb="input"] input {
+    text-align: center;
+}
+
 /* Reduce space between rows */
 div[data-testid="stVerticalBlock"] > div {
     padding-bottom: 0.4rem;
