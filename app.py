@@ -389,7 +389,7 @@ with st.sidebar:
         # Checkout
         # =========================
 
-        if st.button("Check Out!"):
+        if st.button("🚀 Check Out!", use_container_width=True):
 
             if region.strip() == "":
                 st.warning("Please enter Region before Checkout!")
