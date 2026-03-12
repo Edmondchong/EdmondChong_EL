@@ -595,7 +595,7 @@ with st.sidebar:
     
     st.markdown(
         "<p style='font-size:18px; color:White'>"
-        "System support contact: Edmond"
+        "System support please contact: Edmond"
         "</p>",
         unsafe_allow_html=True
     )
