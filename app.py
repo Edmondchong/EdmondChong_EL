@@ -255,7 +255,7 @@ for category, product_list in products.items():
                 img = load_image(product["image"])
 
                 # Horizontal layout
-                col_img, col_name, col_btn = st.columns([1,3,2])
+                col_img, col_name, col_btn = st.columns([1,1,1])
 
                 # Image
                 with col_img:
