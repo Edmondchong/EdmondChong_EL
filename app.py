@@ -145,7 +145,7 @@ if "order_history" not in st.session_state:
     st.session_state.order_history = []
 
 
-st.title("(XLFM) Technical Team Equipment List System")
+st.title("(XLFM) Technical Team Equipment System")
 
 if "search_text" not in st.session_state:
     st.session_state.search_text = ""
