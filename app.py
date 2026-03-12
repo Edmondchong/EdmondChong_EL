@@ -242,84 +242,81 @@ for category, product_list in products.items():
 
                 img = load_image(product["image"])
 
-# -------------------------
-# Product Layout
-# -------------------------
+                # Horizontal layout
+                col_img, col_name, col_btn = st.columns([1,3,2])
 
-col_img, col_name = st.columns([1,4])
+                # Image
+                with col_img:
+                    st.image(img, width=60)
 
-# Image
-with col_img:
-    st.image(img, width=IMG_SIZE)
+                # Item name
+                with col_name:
+                    st.markdown(
+                        f"""
+                        <div style="
+                            font-size:{TITLE_SIZE}px;
+                            font-weight:600;
+                            margin-top:10px;
+                        ">
+                        {product['name']}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
 
-# Item name
-with col_name:
-    st.markdown(
-        f"""
-        <div style="
-            font-size:{TITLE_SIZE}px;
-            font-weight:600;
-            margin-top:10px;
-        ">
-        {product['name']}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+                # Buttons
+                with col_btn:
 
-# -------------------------
-# Quantity Buttons (Below)
-# -------------------------
+                    key = f"qty_{category}_{product['name']}"
 
-key = f"qty_{category}_{product['name']}"
+                    if key not in st.session_state:
+                        st.session_state[key] = 0
 
-if key not in st.session_state:
-    st.session_state[key] = 0
+                    b1, b2, b3 = st.columns([1,1,1])
 
-b1, b2, b3 = st.columns([1,1,1])
+                    # Minus button
+                    with b1:
 
-# Minus button
-with b1:
+                        if st.button(
+                            "-",
+                            key=f"minus_{category}_{product['name']}"
+                        ):
 
-    if st.button(
-        "-",
-        key=f"minus_{category}_{product['name']}"
-    ):
+                            if st.session_state[key] > 0:
 
-        if st.session_state[key] > 0:
+                                st.session_state[key] -= 1
 
-            st.session_state[key] -= 1
+                                if st.session_state[key] > 0:
+                                    st.session_state.cart[product["name"]] = st.session_state[key]
+                                elif product["name"] in st.session_state.cart:
+                                    del st.session_state.cart[product["name"]]
 
-            if st.session_state[key] > 0:
-                st.session_state.cart[product["name"]] = st.session_state[key]
-            elif product["name"] in st.session_state.cart:
-                del st.session_state.cart[product["name"]]
+                                st.rerun()
 
-            st.rerun()
+                    # Quantity
+                    with b2:
 
-# Quantity
-with b2:
+                        st.markdown(
+                            f"<p style='text-align:center;font-size:{QTY_SIZE}px'>{st.session_state[key]}</p>",
+                            unsafe_allow_html=True
+                        )
 
-    st.markdown(
-        f"<p style='text-align:center;font-size:{QTY_SIZE}px'>{st.session_state[key]}</p>",
-        unsafe_allow_html=True
-    )
+                    # Plus button
+                    with b3:
 
-# Plus button
-with b3:
+                        if st.button(
+                            "+",
+                            key=f"plus_{category}_{product['name']}"
+                        ):
 
-    if st.button(
-        "+",
-        key=f"plus_{category}_{product['name']}"
-    ):
+                            if st.session_state[key] < 50:
 
-        if st.session_state[key] < 50:
+                                st.session_state[key] += 1
+                                st.session_state.cart[product["name"]] = st.session_state[key]
 
-            st.session_state[key] += 1
-            st.session_state.cart[product["name"]] = st.session_state[key]
-
-            st.rerun()
-
+                                st.rerun()
+                                
+                                
 # =========================
 # Mobile Sticky Cart Bar
 # =========================
