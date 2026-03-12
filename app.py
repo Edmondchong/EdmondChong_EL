@@ -18,6 +18,7 @@ def load_image(path):
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="centered")
 
 
+
 # -----------------------------
 # UI Font Size
 # -----------------------------
@@ -40,6 +41,14 @@ st.markdown("""
 /* Input box text */
 .stTextInput input {
     font-size:18px !important;
+}
+
+/* SMALLER +/- BUTTONS */
+div.stButton > button {
+    height:25px;
+    width:25px;
+    font-size:12px;
+    padding:0px;
 }
 
 </style>
