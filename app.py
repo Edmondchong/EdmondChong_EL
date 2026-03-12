@@ -234,88 +234,40 @@ for category, product_list in products.items():
             st.rerun()
 
         # -------------------------
-        # Product Items
-        # -------------------------
+# Product Items (Optimized for Mobile Portrait)
+# -------------------------
+for product in filtered_products:
+    with st.container(border=True):
+        img = load_image(product)
+        key = f"qty_{category}_{product['name']}"
+        if key not in st.session_state:
+            st.session_state[key] = 0
 
-        for product in filtered_products:
+        # Use only 3 columns to prevent stacking
+        col_img, col_info, col_ctrl = st.columns([0.8, 2, 1.2])
 
-            with st.container(border=True):
+        with col_img:
+            st.image(img, width=IMG_SIZE)
 
-                img = load_image(product["image"])
+        with col_info:
+            # Item Name
+            st.markdown(f"<div style='font-size:{TITLE_SIZE}px; font-weight:600; line-height:1.2;'>{product['name']}</div>", unsafe_allow_html=True)
 
-                # Horizontal layout
-                col_img, col_name, col_btn = st.columns([1,1,1])
-
-                # Image
-                with col_img:
-                    st.image(img, width=IMG_SIZE)
-
-                # Item name
-                with col_name:
-                    st.markdown(
-                        f"""
-                        <div style="
-                            font-size:{TITLE_SIZE}px;
-                            font-weight:600;
-                            margin-top:10px;
-                        ">
-                        {product['name']}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-                # Buttons
-                with col_btn:
-
-                    key = f"qty_{category}_{product['name']}"
-
-                    if key not in st.session_state:
-                        st.session_state[key] = 0
-
-                    b1, b2, b3 = st.columns([1,1,1])
-
-                    # Minus button
-                    with b1:
-
-                        if st.button(
-                            "-",
-                            key=f"minus_{category}_{product['name']}"
-                        ):
-
-                            if st.session_state[key] > 0:
-
-                                st.session_state[key] -= 1
-
-                                if st.session_state[key] > 0:
-                                    st.session_state.cart[product["name"]] = st.session_state[key]
-                                elif product["name"] in st.session_state.cart:
-                                    del st.session_state.cart[product["name"]]
-
-                                st.rerun()
-
-                    # Quantity
-                    with b2:
-
-                        st.markdown(
-                            f"<p style='text-align:center;font-size:{QTY_SIZE}px'>{st.session_state[key]}</p>",
-                            unsafe_allow_html=True
-                        )
-
-                    # Plus button
-                    with b3:
-
-                        if st.button(
-                            "+",
-                            key=f"plus_{category}_{product['name']}"
-                        ):
-
-                            if st.session_state[key] < 50:
-
-                                st.session_state[key] += 1
-                                st.session_state.cart[product["name"]] = st.session_state[key]
-
-                                st.rerun()
+        with col_ctrl:
+            # Combine Buttons into a tighter nested row or a vertical stack
+            b1, b2, b3 = st.columns([1, 1, 1])
+            with b1:
+                if st.button("-", key=f"m_{category}_{product['name']}"):
+                    if st.session_state[key] > 0:
+                        st.session_state[key] -= 1
+                        st.rerun()
+            with b2:
+                st.markdown(f"<p style='text-align:center; font-size:{QTY_SIZE}px; margin-top:5px;'>{st.session_state[key]}</p>", unsafe_allow_html=True)
+            with b3:
+                if st.button("+", key=f"p_{category}_{product['name']}"):
+                    if st.session_state[key] < 50:
+                        st.session_state[key] += 1
+                        st.rerun()
                                 
                                 
 # =========================
