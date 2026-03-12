@@ -219,6 +219,7 @@ for category, product_list in products.items():
                         f"""
                         <div style="
                             height:65px;
+                            margin-top:-10px;
                             font-size:14px;
                             font-weight:700;
                             display:flex;
