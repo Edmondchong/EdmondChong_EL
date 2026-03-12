@@ -309,15 +309,21 @@ for category, product_list in products.items():
                         ):
 
                             if st.session_state[key] > 0:
-
                                 st.session_state[key] -= 1
 
-                                if st.session_state[key] > 0:
-                                    st.session_state.cart[product["name"]] = st.session_state[key]
-                                elif product["name"] in st.session_state.cart:
-                                    del st.session_state.cart[product["name"]]
+                    # -------------------
+                    # Plus Button
+                    # -------------------
+                    with c3:
 
-                                st.rerun()
+                        if st.button(
+                            "+",
+                            key=f"plus_{category}_{product['name']}",
+                            use_container_width=True
+                        ):
+
+                            if st.session_state[key] < 250:
+                                st.session_state[key] += 1
 
                     # -------------------
                     # Quantity Input
@@ -333,31 +339,17 @@ for category, product_list in products.items():
                             key=key
                         )
 
-                        qty_value = st.session_state[key]
-
-                        if qty_value > 0:
-                            st.session_state.cart[product["name"]] = qty_value
-                        elif product["name"] in st.session_state.cart:
-                            del st.session_state.cart[product["name"]]
-
                     # -------------------
-                    # Plus Button
+                    # Update Cart
                     # -------------------
-                    with c3:
 
-                        if st.button(
-                            "+",
-                            key=f"plus_{category}_{product['name']}",
-                            use_container_width=True
-                        ):
+                    qty_value = st.session_state[key]
 
-                            if st.session_state[key] < 250:
-
-                                st.session_state[key] += 1
-                                st.session_state.cart[product["name"]] = st.session_state[key]
-
-                                st.rerun()
-
+                    if qty_value > 0:
+                        st.session_state.cart[product["name"]] = qty_value
+                    elif product["name"] in st.session_state.cart:
+                        del st.session_state.cart[product["name"]]
+    
 # =========================
 # Mobile Sticky Cart Bar
 # =========================
