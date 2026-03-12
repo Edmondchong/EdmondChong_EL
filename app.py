@@ -24,6 +24,28 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<style>
+
+/* Reduce space between rows */
+div[data-testid="stVerticalBlock"] > div {
+    padding-bottom: 0.4rem;
+}
+
+/* Reduce gap inside containers */
+div[data-testid="stVerticalBlock"] {
+    gap: 0.4rem;
+}
+
+/* Make product cards tighter */
+div[data-testid="stContainer"] {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 # -----------------------------
 # Detect Mobile Screen Automatically
 # -----------------------------
@@ -212,7 +234,7 @@ for category, product_list in products.items():
             st.rerun()
 
         # Responsive Columns
-        cols = st.columns(2) if st.session_state.get("mobile", False) else st.columns(3)
+        cols = st.columns(2) if st.session_state.get("mobile", False) else st.columns(4)
 
         for i, product in enumerate(filtered_products):
 
