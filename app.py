@@ -65,6 +65,43 @@ st.markdown("""
     font-size:18px !important;
 }
 
+/* =============================
+   Mobile Sticky Cart Bar
+   ============================= */
+
+.mobile-cart-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #1f1f1f;
+    border-top: 2px solid #444;
+    padding: 12px 20px;
+    z-index: 9999;
+}
+
+.mobile-cart-inner {
+    max-width: 700px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mobile-cart-text {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.mobile-cart-btn {
+    background-color: #ff8c00;
+    padding: 8px 16px;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -249,11 +286,43 @@ for category, product_list in products.items():
 
                                 st.rerun()
 
+
+# =========================
+# Mobile Sticky Cart Bar
+# =========================
+
+if st.session_state.get("mobile", False):
+
+    total_items = sum(st.session_state.cart.values())
+
+    if total_items > 0:
+
+        st.markdown(
+            f"""
+            <div class="mobile-cart-bar">
+                <div class="mobile-cart-inner">
+
+                    <div class="mobile-cart-text">
+                        🛒 {total_items} items in cart
+                    </div>
+
+                    <a href="#sidebar" class="mobile-cart-btn">
+                        Open Cart
+                    </a>
+
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        
 # =========================
 # Sidebar Cart
 # =========================
 
 with st.sidebar:
+    
+    st.markdown("<a name='sidebar'></a>", unsafe_allow_html=True)
 
     if len(st.session_state.cart) == 0:
 
