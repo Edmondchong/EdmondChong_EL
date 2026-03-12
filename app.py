@@ -592,14 +592,15 @@ with st.sidebar:
     # Recent Orders
     # =========================
 
-    st.divider()
-
+    
     st.markdown(
-        "<p style='font-size:14px; color:gray'>"
+        "<p style='font-size:18px; color:White'>"
         "System support contact: Edmond"
         "</p>",
         unsafe_allow_html=True
     )
+        
+    st.divider()
 
     st.subheader("Recent Orders")
 
