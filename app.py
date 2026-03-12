@@ -51,8 +51,8 @@ else:
     PADDING = 6
 
 if is_mobile:
-    CARD_PADDING = 6
-    CARD_RADIUS = 10
+    CARD_PADDING = 12
+    CARD_RADIUS = 16
 else:
     CARD_PADDING = 12
     CARD_RADIUS = 16
