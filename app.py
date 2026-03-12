@@ -155,7 +155,21 @@ for category, product_list in products.items():
                 # ANCHOR FOR JUMP
                 st.markdown(f"<a name='{product['name']}'></a>", unsafe_allow_html=True)
 
-                st.markdown(f"### {product['name']}")
+                # Fixed height title (align cards)
+                st.markdown(
+                    f"""
+                    <div style="
+                        height:55px;
+                        font-size:22px;
+                        font-weight:700;
+                        display:flex;
+                        align-items:center;
+                    ">
+                    {product['name']}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
                 img = load_image(product["image"])
                 st.image(img, width=100)
@@ -168,7 +182,6 @@ for category, product_list in products.items():
                 c1, c2, c3 = st.columns([1,2,1])
 
                 with c1:
-                    st.markdown("<div style='margin-top:10px'></div>", unsafe_allow_html=True)
                     if st.button("-", key=f"minus_{category}_{product['name']}"):
 
                         if st.session_state[key] > 0:
@@ -189,7 +202,6 @@ for category, product_list in products.items():
                     )
 
                 with c3:
-                    st.markdown("<div style='margin-top:10px'></div>", unsafe_allow_html=True)
                     if st.button("+", key=f"plus_{category}_{product['name']}"):
 
                         if st.session_state[key] < 50:
