@@ -573,8 +573,7 @@ with st.sidebar:
     st.divider()
 
     st.markdown(
-        "<p style='font-size:12px; color:gray'>"
-        "Developed by Edmond<br>"
+        "<p style='font-size:14px; color:gray'>"
         "System support contact: Edmond"
         "</p>",
         unsafe_allow_html=True
