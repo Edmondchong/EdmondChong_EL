@@ -204,9 +204,12 @@ if st.button("🧹 Clear All Items in Cart"):
 # =========================
 
 for category, product_list in products.items():
+
     filtered_products = []
+
     for product in product_list:
         product_name = product["name"].lower().replace("_"," ")
+
         if search:
             if search.lower() in product_name:
                 filtered_products.append(product)
@@ -216,61 +219,103 @@ for category, product_list in products.items():
     if len(filtered_products) == 0:
         continue
 
-    # EVERYTHING below must be indented under the expander
     with st.expander(category, expanded=bool(search)):
 
         if st.button(f"🧹 Clear {category}", key=f"clear_{category}"):
+
             for product in product_list:
+
                 key = f"qty_{category}_{product['name']}"
                 st.session_state[key] = 0
+
                 if product["name"] in st.session_state.cart:
                     del st.session_state.cart[product["name"]]
+
             st.rerun()
+        
+        # -------------------------
+        # Product Items
+        # -------------------------
 
-        # -------------------------
-        # Product Items (Correctly Indented)
-        # -------------------------
         for product in filtered_products:
+
             with st.container(border=True):
-                # FIX: Pass the image path, not the whole dict
-                img = load_image(product) 
-                
-                key = f"qty_{category}_{product['name']}"
-                if key not in st.session_state:
-                    st.session_state[key] = 0
 
-                # 3-column layout to prevent mobile stacking
-                col_img, col_info, col_ctrl = st.columns([0.8, 2.0, 1.5])
+                img = load_image(product["image"])
 
+                # Horizontal layout
+                col_img, col_name, col_btn = st.columns([1,1,1])
+
+                # Image
                 with col_img:
                     st.image(img, width=IMG_SIZE)
 
-                with col_info:
-                    st.markdown(f"<div style='font-size:{TITLE_SIZE}px; font-weight:600; line-height:1.2; margin-top:5px;'>{product['name']}</div>", unsafe_allow_html=True)
+                # Item name
+                with col_name:
+                    st.markdown(
+                        f"""
+                        <div style="
+                            font-size:{TITLE_SIZE}px;
+                            font-weight:600;
+                            margin-top:10px;
+                        ">
+                        {product['name']}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
 
-                with col_ctrl:
-                    # Nested columns for the +/- counter
-                    b1, b2, b3 = st.columns([1, 1, 1])
+                # Buttons
+                with col_btn:
+
+                    key = f"qty_{category}_{product['name']}"
+
+                    if key not in st.session_state:
+                        st.session_state[key] = 0
+
+                    b1, b2, b3 = st.columns([1,1,1])
+
+                    # Minus button
                     with b1:
-                        if st.button("-", key=f"m_{category}_{product['name']}"):
+
+                        if st.button(
+                            "-",
+                            key=f"minus_{category}_{product['name']}"
+                        ):
+
                             if st.session_state[key] > 0:
+
                                 st.session_state[key] -= 1
-                                # Sync with cart
-                                if st.session_state[key] == 0:
-                                    st.session_state.cart.pop(product["name"], None)
-                                else:
+
+                                if st.session_state[key] > 0:
                                     st.session_state.cart[product["name"]] = st.session_state[key]
+                                elif product["name"] in st.session_state.cart:
+                                    del st.session_state.cart[product["name"]]
+
                                 st.rerun()
+
+                    # Quantity
                     with b2:
-                        # Center the number vertically
-                        st.markdown(f"<p style='text-align:center; font-size:{QTY_SIZE}px; margin-top:8px;'>{st.session_state[key]}</p>", unsafe_allow_html=True)
+
+                        st.markdown(
+                            f"<p style='text-align:center;font-size:{QTY_SIZE}px'>{st.session_state[key]}</p>",
+                            unsafe_allow_html=True
+                        )
+
+                    # Plus button
                     with b3:
-                        if st.button("+", key=f"p_{category}_{product['name']}"):
+
+                        if st.button(
+                            "+",
+                            key=f"plus_{category}_{product['name']}"
+                        ):
+
                             if st.session_state[key] < 50:
+
                                 st.session_state[key] += 1
                                 st.session_state.cart[product["name"]] = st.session_state[key]
-                                st.rerun()
 
+                                st.rerun()
                                 
                                 
 # =========================
