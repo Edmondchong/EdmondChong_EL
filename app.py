@@ -17,10 +17,29 @@ def load_image(path):
 
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="centered")
 
+# -----------------------------
+# Detect Mobile Screen Automatically
+# -----------------------------
+st.markdown("""
+<script>
+function sendScreenWidth(){
+    const width = window.innerWidth;
+    const isMobile = width < 768;
+
+    const streamlitEvent = new CustomEvent("streamlit:setComponentValue", {
+        detail: {value: isMobile}
+    });
+
+    window.parent.document.dispatchEvent(streamlitEvent);
+}
+
+sendScreenWidth();
+window.addEventListener("resize", sendScreenWidth);
+</script>
+""", unsafe_allow_html=True)
+
 if "mobile" not in st.session_state:
     st.session_state.mobile = False
-
-st.sidebar.toggle("📱 Mobile Layout", key="mobile")
 
 # -----------------------------
 # UI Font Size
@@ -189,7 +208,7 @@ for category, product_list in products.items():
 
                 with mid_img:
                     img = load_image(product["image"])
-                    img_size = 120 if st.session_state.get("mobile", False) else 100
+                    img_size = 140 if st.session_state.get("mobile", False) else 100
                     st.image(img, width=img_size)
 
                 key = f"qty_{category}_{product['name']}"
