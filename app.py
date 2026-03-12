@@ -32,28 +32,15 @@ st.markdown("""
     font-weight:500;
 }
 
+/* Label paragraph */
 .stTextInput label p,
 .stDateInput label p {
     font-size:18px !important;
 }
 
+/* Input box text */
 .stTextInput input {
     font-size:18px !important;
-}
-
-/* Fix ONLY +/- buttons */
-div[data-testid="stButton"] button {
-    min-height:35px;
-    height:35px;
-    min-width:35px;
-    width:80px;
-    font-size:18px;
-    padding:0;
-}
-
-/* Prevent text buttons from breaking words */
-div[data-testid="stButton"] button span {
-    white-space:nowrap;
 }
 
 </style>
@@ -193,10 +180,10 @@ for category, product_list in products.items():
                 if key not in st.session_state:
                     st.session_state[key] = 0
 
-                c1, c2, c3 = st.columns([1,2,1])
+                c1, c2, c3 = st.columns([0.6,1,0.6])
 
                 with c1:
-                    if st.button("-", key=f"minus_{category}_{product['name']}"):
+                    if st.button("-", key=f"minus_{category}_{product['name']}", use_container_width=False):
 
                         if st.session_state[key] > 0:
 
@@ -216,7 +203,7 @@ for category, product_list in products.items():
                     )
 
                 with c3:
-                    if st.button("+", key=f"plus_{category}_{product['name']}"):
+                    if st.button("+", key=f"plus_{category}_{product['name']}", use_container_width=False):
 
                         if st.session_state[key] < 50:
 
