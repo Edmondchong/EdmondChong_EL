@@ -18,29 +18,26 @@ def load_image(path):
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="centered")
 
 # -----------------------------
-# Detect Mobile Screen Automatically
+# Detect Mobile using query width
 # -----------------------------
-st.markdown("""
+import streamlit.components.v1 as components
+
+mobile_detect = components.html(
+"""
 <script>
-function sendScreenWidth(){
-    const width = window.innerWidth;
-    const isMobile = width < 768;
-
-    const streamlitEvent = new CustomEvent("streamlit:setComponentValue", {
-        detail: {value: isMobile}
-    });
-
-    window.parent.document.dispatchEvent(streamlitEvent);
-}
-
-sendScreenWidth();
-window.addEventListener("resize", sendScreenWidth);
+var width = window.innerWidth;
+document.write(width);
 </script>
-""", unsafe_allow_html=True)
+""",
+height=0,
+)
 
-if "mobile" not in st.session_state:
-    st.session_state.mobile = False
+try:
+    screen_width = int(mobile_detect)
+except:
+    screen_width = 1000
 
+is_mobile = screen_width < 768
 # -----------------------------
 # UI Font Size
 # -----------------------------
@@ -205,7 +202,7 @@ for category, product_list in products.items():
             st.rerun()
 
         # Responsive Columns
-        cols = st.columns(2) if st.session_state.get("mobile", False) else st.columns(3)
+        cols = st.columns(2) if is_mobile else st.columns(3)
 
         for i, product in enumerate(filtered_products):
 
@@ -234,7 +231,7 @@ for category, product_list in products.items():
 
                     img = load_image(product["image"])
 
-                    img_size = 120 if st.session_state.get("mobile", False) else 100
+                    img_size = 120 if is_mobile else 100
                     
                     left_img, mid_img, right_img = st.columns([1,2,1])
 
@@ -294,7 +291,7 @@ for category, product_list in products.items():
 # Mobile Sticky Cart Bar
 # =========================
 
-if st.session_state.get("mobile", False):
+if is_mobile:
 
     total_items = sum(st.session_state.cart.values())
 
