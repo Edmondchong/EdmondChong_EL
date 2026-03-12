@@ -9,11 +9,26 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 import streamlit.components.v1 as components
 
-is_mobile = False
+width = components.html(
+"""
+<script>
+document.write(window.innerWidth)
+</script>
+""",
+height=0,
+)
+
+try:
+    width = int(width)
+except:
+    width = 1200
+
+is_mobile = width < 900
 
 @st.cache_data
 def load_image(path):
-    return Image.open(path)
+    img = Image.open(path)
+    return img.resize((100,100))
 
 
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="wide")
@@ -242,12 +257,12 @@ for category, product_list in products.items():
 
                 img = load_image(product["image"])
 
-                # Horizontal layout (original layout kept)
+                # Horizontal layout
                 col_img, col_name, col_btn = st.columns([1,3,2])
 
                 # Image
                 with col_img:
-                    st.image(img, width=IMG_SIZE)
+                    st.image(img, width=60)
 
                 # Item name
                 with col_name:
@@ -315,6 +330,7 @@ for category, product_list in products.items():
                                 st.session_state.cart[product["name"]] = st.session_state[key]
 
                                 st.rerun()
+                                
                                 
 # =========================
 # Mobile Sticky Cart Bar
