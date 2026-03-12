@@ -15,7 +15,7 @@ def load_image(path):
     return img.resize((100,100))
 
 
-st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="centered")
+st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="wide")
 
 # -----------------------------
 # Detect Mobile using query width
