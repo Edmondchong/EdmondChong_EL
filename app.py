@@ -46,7 +46,7 @@ div[data-testid="stButton"] button {
     min-height:35px;
     height:35px;
     min-width:35px;
-    width:35px;
+    width:80px;
     font-size:18px;
     padding:0;
 }
