@@ -250,7 +250,7 @@ for category, product_list in products.items():
 
                 with cols[col_index]:
 
-                    with st.container(border=True):
+                    with st.container():
 
                         st.markdown(
                             f"""
