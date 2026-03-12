@@ -235,7 +235,7 @@ for category, product_list in products.items():
             st.rerun()
 
         # Responsive Columns
-        columns_count = 2 if is_mobile else 3
+        columns_count = 3 if is_mobile else 5
 
         for row in range(0, len(filtered_products), columns_count):
 
@@ -289,6 +289,7 @@ for category, product_list in products.items():
                             if st.button(
                                 "-",
                                 key=f"minus_{category}_{product['name']}",
+                                use_container_width=True
                             ):
 
                                 if st.session_state[key] > 0:
@@ -314,6 +315,7 @@ for category, product_list in products.items():
                             if st.button(
                                 "+",
                                 key=f"plus_{category}_{product['name']}",
+                                use_container_width=True
                             ):
 
                                 if st.session_state[key] < 50:
