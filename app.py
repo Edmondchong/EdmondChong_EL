@@ -12,7 +12,7 @@ from reportlab.lib import colors
 @st.cache_data
 def load_image(path):
     img = Image.open(path)
-    return img.resize((100,100))
+    return img.resize((150,150))
 
 
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="centered")
@@ -219,9 +219,9 @@ for category, product_list in products.items():
                         f"""
                         <div style="
                             height:5px;
-                            margin-top:-30px;
+                            margin-top:-25px;
                             font-size:14px;
-                            font-weight:300;
+                            font-weight:550;
                             display:flex;
                             align-items:center;
                             justify-content:center;
@@ -235,7 +235,7 @@ for category, product_list in products.items():
 
                     img = load_image(product["image"])
 
-                    img_size = 200 if st.session_state.get("mobile", False) else 100
+                    img_size = 150 if st.session_state.get("mobile", False) else 100
                     
                     left_img, mid_img, right_img = st.columns([1,2,1])
 
@@ -247,7 +247,7 @@ for category, product_list in products.items():
                     if key not in st.session_state:
                         st.session_state[key] = 0
 
-                    c1, c2, c3 = st.columns([0.5,1,0.5])
+                    c1, c2, c3 = st.columns([1,1,1])
 
                     with c1:
 
