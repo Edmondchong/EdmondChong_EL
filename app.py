@@ -12,7 +12,7 @@ from reportlab.lib import colors
 @st.cache_data
 def load_image(path):
     img = Image.open(path)
-    return img.resize((300,300))
+    return img.resize((100,100))
 
 
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="centered")
@@ -158,7 +158,7 @@ for category, product_list in products.items():
                 st.markdown(f"### {product['name']}")
 
                 img = load_image(product["image"])
-                st.image(img, width=150)
+                st.image(img, width=100)
 
                 key = f"qty_{category}_{product['name']}"
 
@@ -168,6 +168,7 @@ for category, product_list in products.items():
                 c1, c2, c3 = st.columns([1,2,1])
 
                 with c1:
+                    st.markdown("<div style='margin-top:10px'></div>", unsafe_allow_html=True)
                     if st.button("-", key=f"minus_{category}_{product['name']}"):
 
                         if st.session_state[key] > 0:
@@ -188,6 +189,7 @@ for category, product_list in products.items():
                     )
 
                 with c3:
+                    st.markdown("<div style='margin-top:10px'></div>", unsafe_allow_html=True)
                     if st.button("+", key=f"plus_{category}_{product['name']}"):
 
                         if st.session_state[key] < 50:
