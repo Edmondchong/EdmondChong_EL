@@ -7,7 +7,23 @@ from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
+import streamlit.components.v1 as components
 
+width = components.html(
+"""
+<script>
+document.write(window.innerWidth)
+</script>
+""",
+height=0,
+)
+
+try:
+    width = int(width)
+except:
+    width = 1200
+
+is_mobile = width < 900
 
 @st.cache_data
 def load_image(path):
@@ -202,7 +218,11 @@ for category, product_list in products.items():
             st.rerun()
 
         # Responsive Columns
-        cols = st.columns(2, gap="small") if is_mobile else st.columns(3)
+        if is_mobile:
+            cols = st.columns(2)
+        else:
+            cols = st.columns(3)
+    
 
         for i, product in enumerate(filtered_products):
 
