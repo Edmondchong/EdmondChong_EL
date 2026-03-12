@@ -33,27 +33,23 @@ def load_image(path):
 
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="wide")
 
+
 # -----------------------------
-# Detect Mobile using query width
+# UI Scaling
 # -----------------------------
-import streamlit.components.v1 as components
-
-mobile_detect = components.html(
-"""
-<script>
-var width = window.innerWidth;
-document.write(width);
-</script>
-""",
-height=0,
-)
-
-try:
-    screen_width = int(mobile_detect)
-except:
-    screen_width = 1000
-
-is_mobile = screen_width < 768
+if is_mobile:
+    IMG_SIZE = 70
+    TITLE_SIZE = 14
+    QTY_SIZE = 16
+    BTN_HEIGHT = 32
+    PADDING = 3
+else:
+    IMG_SIZE = 100
+    TITLE_SIZE = 18
+    QTY_SIZE = 20
+    BTN_HEIGHT = 38
+    PADDING = 6
+    
 # -----------------------------
 # UI Font Size
 # -----------------------------
@@ -113,6 +109,27 @@ st.markdown("""
     color: white;
     text-decoration: none;
     font-weight: 600;
+}
+
+/* =============================
+   Reduce Card Spacing
+   ============================= */
+
+div[data-testid="stVerticalBlock"] > div {
+    padding-top:4px;
+    padding-bottom:4px;
+}
+
+/* =============================
+   Mobile UI Compression
+   ============================= */
+
+@media (max-width:768px){
+
+button[kind="secondary"]{
+    padding:4px !important;
+}
+
 }
 
 </style>
@@ -246,8 +263,8 @@ for category, product_list in products.items():
                     st.markdown(
                         f"""
                         <div style="
-                            height:50px;
-                            font-size:18px;
+                            height:40px;
+                            font-size:{TITLE_SIZE}px;
                             font-weight:700;
                             display:flex;
                             align-items:center;
@@ -262,7 +279,7 @@ for category, product_list in products.items():
 
                     img = load_image(product["image"])
 
-                    img_size = 90 if is_mobile else 100
+                    img_size = IMG_SIZE
                     
                     left_img, mid_img, right_img = st.columns([1,2,1])
 
@@ -298,7 +315,7 @@ for category, product_list in products.items():
                     with c2:
 
                         st.markdown(
-                            f"<p style='text-align:center;font-size:20px'>{st.session_state[key]}</p>",
+                            f"<p style='text-align:center;font-size:{QTY_SIZE}px'>{st.session_state[key]}</p>",
                             unsafe_allow_html=True
                         )
 
@@ -610,7 +627,7 @@ with st.sidebar:
 
         for i, order in enumerate(st.session_state.order_history):
 
-            with st.container(border=True):
+            with st.container():
 
                 labels = ["🟢 Latest", "🟡 Second Latest", "⚪ Oldest"]
                 label = labels[i] if i < len(labels) else f"Order {i+1}"
