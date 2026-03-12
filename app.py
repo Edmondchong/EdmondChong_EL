@@ -219,8 +219,8 @@ for category, product_list in products.items():
                         f"""
                         <div style="
                             height:150px;
-                            margin-top:-50px;
-                            font-size:14px;
+                            margin-top:-20px;
+                            font-size:50px;
                             font-weight:700;
                             display:flex;
                             align-items:center;
