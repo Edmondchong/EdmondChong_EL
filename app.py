@@ -367,7 +367,7 @@ with st.sidebar:
         total_items = sum(st.session_state.cart.values())
 
         st.markdown(
-            "<p style='font-size:20px; color:gray; margin-top:-10px;'>"
+            "<p style='font-size:20px; color:white; margin-top:-10px;'>"
             "System support contact: Edmond"
             "</p>",
             unsafe_allow_html=True
