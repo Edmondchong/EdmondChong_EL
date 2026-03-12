@@ -240,7 +240,7 @@ for category, product_list in products.items():
                     left_img, mid_img, right_img = st.columns([1,10,1])
 
                     with mid_img:
-                        st.image(img, width=img_size)
+                        st.image(img, use_container_width=True)
 
                     key = f"qty_{category}_{product['name']}"
 
