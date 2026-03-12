@@ -45,9 +45,9 @@ st.markdown("""
 
 /* SMALLER +/- BUTTONS */
 div.stButton > button {
-    height:25px;
-    width:25px;
-    font-size:12px;
+    height:35px;
+    width:35px;
+    font-size:18px;
     padding:0px;
 }
 
