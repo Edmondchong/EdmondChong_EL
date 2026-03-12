@@ -7,7 +7,23 @@ from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
+import streamlit.components.v1 as components
 
+width = components.html(
+"""
+<script>
+document.write(window.innerWidth)
+</script>
+""",
+height=0,
+)
+
+try:
+    width = int(width)
+except:
+    width = 1200
+
+is_mobile = width < 900
 
 @st.cache_data
 def load_image(path):
@@ -15,32 +31,25 @@ def load_image(path):
     return img.resize((100,100))
 
 
-st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="centered")
+st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="wide")
+
 
 # -----------------------------
-# Detect Mobile Screen Automatically
+# UI Scaling
 # -----------------------------
-st.markdown("""
-<script>
-function sendScreenWidth(){
-    const width = window.innerWidth;
-    const isMobile = width < 768;
-
-    const streamlitEvent = new CustomEvent("streamlit:setComponentValue", {
-        detail: {value: isMobile}
-    });
-
-    window.parent.document.dispatchEvent(streamlitEvent);
-}
-
-sendScreenWidth();
-window.addEventListener("resize", sendScreenWidth);
-</script>
-""", unsafe_allow_html=True)
-
-if "mobile" not in st.session_state:
-    st.session_state.mobile = False
-
+if is_mobile:
+    IMG_SIZE = 70
+    TITLE_SIZE = 14
+    QTY_SIZE = 16
+    BTN_HEIGHT = 32
+    PADDING = 3
+else:
+    IMG_SIZE = 100
+    TITLE_SIZE = 18
+    QTY_SIZE = 20
+    BTN_HEIGHT = 38
+    PADDING = 6
+    
 # -----------------------------
 # UI Font Size
 # -----------------------------
@@ -63,6 +72,77 @@ st.markdown("""
 /* Input box text */
 .stTextInput input {
     font-size:18px !important;
+}
+
+/* =============================
+   Mobile Sticky Cart Bar
+   ============================= */
+
+.mobile-cart-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #1f1f1f;
+    border-top: 2px solid #444;
+    padding: 12px 20px;
+    z-index: 9999;
+}
+
+.mobile-cart-inner {
+    max-width: 700px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mobile-cart-text {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.mobile-cart-btn {
+    background-color: #ff8c00;
+    padding: 8px 16px;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* =============================
+   Reduce Card Spacing
+   ============================= */
+
+div[data-testid="stVerticalBlock"] > div {
+    padding-top:4px;
+    padding-bottom:4px;
+}
+
+/* =============================
+   Mobile UI Compression
+   ============================= */
+
+@media (max-width:768px){
+
+button[kind="secondary"]{
+    padding:4px !important;
+}
+
+}
+
+/* Reduce main page padding */
+.block-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+/* Reduce card spacing */
+div[data-testid="stHorizontalBlock"]{
+    gap:8px;
 }
 
 </style>
@@ -167,27 +247,31 @@ for category, product_list in products.items():
 
             st.rerun()
 
-        # Responsive Columns
-        cols = st.columns(2) if st.session_state.get("mobile", False) else st.columns(3)
+        # -------------------------
+        # Product Items
+        # -------------------------
 
-        for i, product in enumerate(filtered_products):
+        for product in filtered_products:
 
-            with cols[i % len(cols)]:
+            with st.container(border=True):
 
-                with st.container(border=True):
+                img = load_image(product["image"])
 
-                    st.markdown(f"<a name='{product['name']}'></a>", unsafe_allow_html=True)
+                # Horizontal layout
+                col_img, col_name, col_btn = st.columns([1,3,2])
 
+                # Image
+                with col_img:
+                    st.image(img, width=60)
+
+                # Item name
+                with col_name:
                     st.markdown(
                         f"""
                         <div style="
-                            height:50px;
-                            font-size:18px;
-                            font-weight:700;
-                            display:flex;
-                            align-items:center;
-                            justify-content:center;
-                            text-align:center;
+                            font-size:{TITLE_SIZE}px;
+                            font-weight:600;
+                            margin-top:10px;
                         ">
                         {product['name']}
                         </div>
@@ -195,25 +279,22 @@ for category, product_list in products.items():
                         unsafe_allow_html=True
                     )
 
-                    img = load_image(product["image"])
-
-                    img_size = 120 if st.session_state.get("mobile", False) else 100
-
-                    st.image(img, width=img_size)
+                # Buttons
+                with col_btn:
 
                     key = f"qty_{category}_{product['name']}"
 
                     if key not in st.session_state:
                         st.session_state[key] = 0
 
-                    c1, c2, c3 = st.columns([1,1,1])
+                    b1, b2, b3 = st.columns([1,1,1])
 
-                    with c1:
+                    # Minus button
+                    with b1:
 
                         if st.button(
                             "-",
-                            key=f"minus_{category}_{product['name']}",
-                            use_container_width=True
+                            key=f"minus_{category}_{product['name']}"
                         ):
 
                             if st.session_state[key] > 0:
@@ -227,19 +308,20 @@ for category, product_list in products.items():
 
                                 st.rerun()
 
-                    with c2:
+                    # Quantity
+                    with b2:
 
                         st.markdown(
-                            f"<p style='text-align:center;font-size:20px'>{st.session_state[key]}</p>",
+                            f"<p style='text-align:center;font-size:{QTY_SIZE}px'>{st.session_state[key]}</p>",
                             unsafe_allow_html=True
                         )
 
-                    with c3:
+                    # Plus button
+                    with b3:
 
                         if st.button(
                             "+",
-                            key=f"plus_{category}_{product['name']}",
-                            use_container_width=True
+                            key=f"plus_{category}_{product['name']}"
                         ):
 
                             if st.session_state[key] < 50:
@@ -248,12 +330,44 @@ for category, product_list in products.items():
                                 st.session_state.cart[product["name"]] = st.session_state[key]
 
                                 st.rerun()
+                                
+                                
+# =========================
+# Mobile Sticky Cart Bar
+# =========================
 
+if is_mobile:
+
+    total_items = sum(st.session_state.cart.values())
+
+    if total_items > 0:
+
+        st.markdown(
+            f"""
+            <div class="mobile-cart-bar">
+                <div class="mobile-cart-inner">
+
+                    <div class="mobile-cart-text">
+                        🛒 {total_items} items in cart
+                    </div>
+
+                    <a href="#sidebar" class="mobile-cart-btn">
+                        Open Cart
+                    </a>
+
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        
 # =========================
 # Sidebar Cart
 # =========================
 
 with st.sidebar:
+    
+    st.markdown("<a name='sidebar'></a>", unsafe_allow_html=True)
 
     if len(st.session_state.cart) == 0:
 
@@ -320,7 +434,7 @@ with st.sidebar:
         # Checkout
         # =========================
 
-        if st.button("Check Out!"):
+        if st.button("🚀 Check Out!", use_container_width=True):
 
             if region.strip() == "":
                 st.warning("Please enter Region before Checkout!")
@@ -510,7 +624,7 @@ with st.sidebar:
 
         for i, order in enumerate(st.session_state.order_history):
 
-            with st.container(border=True):
+            with st.container():
 
                 labels = ["🟢 Latest", "🟡 Second Latest", "⚪ Oldest"]
                 label = labels[i] if i < len(labels) else f"Order {i+1}"
