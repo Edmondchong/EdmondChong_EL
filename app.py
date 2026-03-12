@@ -313,7 +313,7 @@ for category, product_list in products.items():
                         new_qty = st.number_input(
                             "",
                             min_value=0,
-                            max_value=50,
+                            max_value=250,
                             value=st.session_state[key],
                             step=1,
                             label_visibility="collapsed",
