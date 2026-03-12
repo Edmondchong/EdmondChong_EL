@@ -309,25 +309,22 @@ for category, product_list in products.items():
                     # Editable Quantity
                     # -------------------
                     with c2:
-
-                        new_qty = st.number_input(
+                            
+                        st.number_input(
                             "",
                             min_value=0,
                             max_value=250,
-                            value=st.session_state[key],
                             step=1,
                             label_visibility="collapsed",
-                            key=f"input_{category}_{product['name']}"
+                            key=key
                         )
 
-                        if new_qty != st.session_state[key]:
+                        qty_value = st.session_state[key]
 
-                            st.session_state[key] = new_qty
-
-                            if new_qty > 0:
-                                st.session_state.cart[product["name"]] = new_qty
-                            elif product["name"] in st.session_state.cart:
-                                del st.session_state.cart[product["name"]]
+                        if qty_value > 0:
+                            st.session_state.cart[product["name"]] = qty_value
+                        elif product["name"] in st.session_state.cart:
+                            del st.session_state.cart[product["name"]]
 
                             st.rerun()
 
