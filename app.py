@@ -41,12 +41,19 @@ st.markdown("""
     font-size:18px !important;
 }
 
-/* ONLY shrink + and - buttons */
-button[kind="secondary"] {
+/* Fix ONLY +/- buttons */
+div[data-testid="stButton"] button {
+    min-height:35px;
     height:35px;
+    min-width:35px;
     width:35px;
     font-size:18px;
-    padding:0px;
+    padding:0;
+}
+
+/* Prevent text buttons from breaking words */
+div[data-testid="stButton"] button span {
+    white-space:nowrap;
 }
 
 </style>
