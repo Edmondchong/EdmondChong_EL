@@ -12,7 +12,7 @@ from reportlab.lib import colors
 @st.cache_data
 def load_image(path):
     img = Image.open(path)
-    return img.resize((1000,1000))
+    return img.resize((300,300))
 
 
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="centered")
@@ -158,7 +158,7 @@ for category, product_list in products.items():
                 st.markdown(f"### {product['name']}")
 
                 img = load_image(product["image"])
-                st.image(img, use_container_width=True)
+                st.image(img, width=150)
 
                 key = f"qty_{category}_{product['name']}"
 
