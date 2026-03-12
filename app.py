@@ -234,7 +234,7 @@ for category, product_list in products.items():
             st.rerun()
 
         # Responsive Columns
-        cols = st.columns(2) if st.session_state.get("mobile", False) else st.columns(4)
+        cols = st.columns(2) if st.session_state.get("mobile", False) else st.columns(3)
 
         for i, product in enumerate(filtered_products):
 
@@ -366,6 +366,13 @@ with st.sidebar:
 
         total_items = sum(st.session_state.cart.values())
 
+        st.markdown(
+            "<p style='font-size:12px; color:gray; margin-top:-10px;'>"
+            "System support contact: Edmond"
+            "</p>",
+            unsafe_allow_html=True
+        )
+        
         st.header(f"🛒 Cart ({total_items} items)")
 
         for category, product_list in products.items():
@@ -591,14 +598,6 @@ with st.sidebar:
     # =========================
     # Recent Orders
     # =========================
-
-    
-    st.markdown(
-        "<p style='font-size:18px; color:White'>"
-        "System support please contact: Edmond"
-        "</p>",
-        unsafe_allow_html=True
-    )
         
     st.divider()
 
