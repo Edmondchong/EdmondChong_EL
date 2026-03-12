@@ -235,8 +235,11 @@ for category, product_list in products.items():
                     img = load_image(product["image"])
 
                     img_size = 120 if st.session_state.get("mobile", False) else 100
+                    
+                    left_img, mid_img, right_img = st.columns([1,2,1])
 
-                    st.image(img, width=img_size)
+                    with mid_img:
+                        st.image(img, width=img_size)
 
                     key = f"qty_{category}_{product['name']}"
 
