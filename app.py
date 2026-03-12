@@ -165,6 +165,8 @@ for category, product_list in products.items():
                         font-weight:700;
                         display:flex;
                         align-items:center;
+                        justify-content:center;
+                        text-align:center;
                     ">
                     {product['name']}
                     </div>
@@ -172,9 +174,14 @@ for category, product_list in products.items():
                     unsafe_allow_html=True
                 )
 
-                # Product image
-                img = load_image(product["image"])
-                st.image(img, width=100)
+                # =========================
+                # Centered Image
+                # =========================
+                left_img, mid_img, right_img = st.columns([1,2,1])
+
+                with mid_img:
+                    img = load_image(product["image"])
+                    st.image(img, width=100)
 
                 key = f"qty_{category}_{product['name']}"
 
@@ -183,9 +190,8 @@ for category, product_list in products.items():
 
 
                 # =========================
-                # Compact quantity control
+                # Centered Quantity Control
                 # =========================
-
                 left, mid, right = st.columns([1,2,1])
 
                 with mid:
@@ -210,7 +216,7 @@ for category, product_list in products.items():
                     # Quantity number
                     with c2:
                         st.markdown(
-                            f"<p style='text-align:center;font-size:22px;margin:0'>{st.session_state[key]}</p>",
+                            f"<p style='text-align:center;font-size:20px;margin-top:4px;margin-bottom:4px'>{st.session_state[key]}</p>",
                             unsafe_allow_html=True
                         )
 
