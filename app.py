@@ -132,6 +132,19 @@ button[kind="secondary"]{
 
 }
 
+/* Reduce main page padding */
+.block-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+/* Reduce card spacing */
+div[data-testid="stHorizontalBlock"]{
+    gap:8px;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
