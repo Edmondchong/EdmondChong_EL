@@ -326,8 +326,6 @@ for category, product_list in products.items():
                         elif product["name"] in st.session_state.cart:
                             del st.session_state.cart[product["name"]]
 
-                            st.rerun()
-
                     # -------------------
                     # Plus Button
                     # -------------------
