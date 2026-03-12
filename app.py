@@ -48,98 +48,71 @@ else:
     PADDING = 6
     
 # -----------------------------
-# UI Font Size
+# UI Font Size & Mobile Layout Fix
 # -----------------------------
 st.markdown("""
 <style>
 
-/* Label text size */
-.stTextInput label,
-.stDateInput label {
+/* 1. Standard Input Styling */
+.stTextInput label, .stDateInput label {
     font-size:18px !important;
     font-weight:500;
 }
-
-/* Label paragraph */
-.stTextInput label p,
-.stDateInput label p {
-    font-size:18px !important;
-}
-
-/* Input box text */
 .stTextInput input {
     font-size:18px !important;
 }
 
-/* =============================
-   Mobile Sticky Cart Bar
-   ============================= */
+/* 2. FORCE HORIZONTAL LAYOUT ON MOBILE */
+/* This prevents the "stacking" behavior in your product cards */
+@media (max-width: 768px) {
+    /* Target the container that holds the columns */
+    div[data-testid="column"] {
+        width: unset !important;
+        flex: 1 1 0% !important;
+        min-width: 0px !important;
+    }
 
+    /* Force the parent horizontal block to not wrap */
+    div[data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 5px !important;
+    }
+
+    /* Make buttons smaller so they fit side-by-side */
+    .stButton button {
+        padding: 0px 5px !important;
+        height: 35px !important;
+        width: 100% !important;
+        font-size: 14px !important;
+    }
+
+    /* Prevent the image from being squished */
+    div[data-testid="stImage"] img {
+        max-width: 60px !important;
+        height: auto !important;
+    }
+}
+
+/* 3. Mobile Sticky Cart Bar */
 .mobile-cart-bar {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     background: #1f1f1f;
     border-top: 2px solid #444;
     padding: 12px 20px;
     z-index: 9999;
 }
 
-.mobile-cart-inner {
-    max-width: 700px;
-    margin: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.mobile-cart-text {
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.mobile-cart-btn {
-    background-color: #ff8c00;
-    padding: 8px 16px;
-    border-radius: 6px;
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-/* =============================
-   Reduce Card Spacing
-   ============================= */
-
+/* 4. Layout Compression */
 div[data-testid="stVerticalBlock"] > div {
     padding-top:4px;
     padding-bottom:4px;
 }
-
-/* =============================
-   Mobile UI Compression
-   ============================= */
-
-@media (max-width:768px){
-
-button[kind="secondary"]{
-    padding:4px !important;
-}
-
-}
-
-/* Reduce main page padding */
 .block-container {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
-}
-
-/* Reduce card spacing */
-div[data-testid="stHorizontalBlock"]{
-    gap:8px;
+    padding: 1rem 1.5rem !important;
 }
 
 </style>
