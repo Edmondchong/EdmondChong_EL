@@ -12,7 +12,7 @@ from reportlab.lib import colors
 @st.cache_data
 def load_image(path):
     img = Image.open(path)
-    return img.resize((130,130))
+    return img.resize((250,250))
 
 
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="centered")
