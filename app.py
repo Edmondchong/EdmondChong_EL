@@ -147,11 +147,11 @@ for category, product_list in products.items():
 
             st.rerun()
 
-        cols = st.columns(2)
+        cols = st.columns(4)
 
         for i, product in enumerate(filtered_products):
 
-            with cols[i % 2]:
+            with cols[i % 4]:
 
                 # Anchor for sidebar jump
                 st.markdown(f"<a name='{product['name']}'></a>", unsafe_allow_html=True)
