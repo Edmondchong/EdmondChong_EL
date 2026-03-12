@@ -221,7 +221,6 @@ if st.button("🧹 Clear All Items in Cart"):
 
 for category, product_list in products.items():
 
-```
 filtered_products = []
 
 for product in product_list:
