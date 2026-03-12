@@ -153,10 +153,10 @@ for category, product_list in products.items():
 
             with cols[i % 2]:
 
-                # ANCHOR FOR JUMP
+                # Anchor for sidebar jump
                 st.markdown(f"<a name='{product['name']}'></a>", unsafe_allow_html=True)
 
-                # Fixed height title (align cards)
+                # Product title
                 st.markdown(
                     f"""
                     <div style="
@@ -172,6 +172,7 @@ for category, product_list in products.items():
                     unsafe_allow_html=True
                 )
 
+                # Product image
                 img = load_image(product["image"])
                 st.image(img, width=100)
 
@@ -180,37 +181,49 @@ for category, product_list in products.items():
                 if key not in st.session_state:
                     st.session_state[key] = 0
 
-                c1, c2, c3 = st.columns([0.6,0.4,0.6])
 
-                with c1:
-                    if st.button("-", key=f"minus_{category}_{product['name']}", use_container_width=False):
+                # =========================
+                # Compact quantity control
+                # =========================
 
-                        if st.session_state[key] > 0:
+                left, mid, right = st.columns([1,2,1])
 
-                            st.session_state[key] -= 1
+                with mid:
+
+                    c1, c2, c3 = st.columns([1,1,1], gap="small")
+
+                    # Minus button
+                    with c1:
+                        if st.button("-", key=f"minus_{category}_{product['name']}", use_container_width=True):
 
                             if st.session_state[key] > 0:
+
+                                st.session_state[key] -= 1
+
+                                if st.session_state[key] > 0:
+                                    st.session_state.cart[product["name"]] = st.session_state[key]
+                                elif product["name"] in st.session_state.cart:
+                                    del st.session_state.cart[product["name"]]
+
+                                st.rerun()
+
+                    # Quantity number
+                    with c2:
+                        st.markdown(
+                            f"<p style='text-align:center;font-size:22px;margin:0'>{st.session_state[key]}</p>",
+                            unsafe_allow_html=True
+                        )
+
+                    # Plus button
+                    with c3:
+                        if st.button("+", key=f"plus_{category}_{product['name']}", use_container_width=True):
+
+                            if st.session_state[key] < 50:
+
+                                st.session_state[key] += 1
                                 st.session_state.cart[product["name"]] = st.session_state[key]
-                            elif product["name"] in st.session_state.cart:
-                                del st.session_state.cart[product["name"]]
 
-                            st.rerun()
-
-                with c2:
-                    st.markdown(
-                        f"<h3 style='text-align:center'>{st.session_state[key]}</h3>",
-                        unsafe_allow_html=True
-                    )
-
-                with c3:
-                    if st.button("+", key=f"plus_{category}_{product['name']}", use_container_width=False):
-
-                        if st.session_state[key] < 50:
-
-                            st.session_state[key] += 1
-                            st.session_state.cart[product["name"]] = st.session_state[key]
-
-                            st.rerun()
+                                st.rerun()
 
 # =========================
 # Sidebar Cart
