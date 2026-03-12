@@ -218,8 +218,8 @@ for category, product_list in products.items():
                     st.markdown(
                         f"""
                         <div style="
-                            height:50px;
-                            font-size:18px;
+                            height:65px;
+                            font-size:14px;
                             font-weight:700;
                             display:flex;
                             align-items:center;
