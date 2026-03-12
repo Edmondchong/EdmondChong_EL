@@ -289,7 +289,6 @@ for category, product_list in products.items():
                             if st.button(
                                 "-",
                                 key=f"minus_{category}_{product['name']}",
-                                use_container_width=True
                             ):
 
                                 if st.session_state[key] > 0:
@@ -315,7 +314,6 @@ for category, product_list in products.items():
                             if st.button(
                                 "+",
                                 key=f"plus_{category}_{product['name']}",
-                                use_container_width=True
                             ):
 
                                 if st.session_state[key] < 50:
