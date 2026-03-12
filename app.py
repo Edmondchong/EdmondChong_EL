@@ -9,26 +9,11 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 import streamlit.components.v1 as components
 
-width = components.html(
-"""
-<script>
-document.write(window.innerWidth)
-</script>
-""",
-height=0,
-)
-
-try:
-    width = int(width)
-except:
-    width = 1200
-
-is_mobile = width < 900
+is_mobile = False
 
 @st.cache_data
 def load_image(path):
-    img = Image.open(path)
-    return img.resize((100,100))
+    return Image.open(path)
 
 
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="wide")
@@ -262,7 +247,7 @@ for category, product_list in products.items():
 
                 # Image
                 with col_img:
-                    st.image(img, width=60)
+                    st.image(img, width=IMG_SIZE)
 
                 # Item name
                 with col_name:
