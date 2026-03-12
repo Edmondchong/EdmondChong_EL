@@ -180,7 +180,7 @@ for category, product_list in products.items():
                 if key not in st.session_state:
                     st.session_state[key] = 0
 
-                c1, c2, c3 = st.columns([0.2,0.3,0.2])
+                c1, c2, c3 = st.columns([0.2,2,0.2])
 
                 with c1:
                     if st.button("-", key=f"minus_{category}_{product['name']}", use_container_width=False):
