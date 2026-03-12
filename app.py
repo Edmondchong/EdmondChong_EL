@@ -216,127 +216,119 @@ if st.button("🧹 Clear All Items in Cart"):
 # =========================
 # Products
 # =========================
-
 for category, product_list in products.items():
 
-    filtered_products = []
+filtered_products = []
 
-    for product in product_list:
-        product_name = product["name"].lower().replace("_"," ")
+for product in product_list:
+    product_name = product["name"].lower().replace("_"," ")
 
-        if search:
-            if search.lower() in product_name:
-                filtered_products.append(product)
-        else:
+    if search:
+        if search.lower() in product_name:
             filtered_products.append(product)
+    else:
+        filtered_products.append(product)
 
-    if len(filtered_products) == 0:
-        continue
+if len(filtered_products) == 0:
+    continue
 
-    with st.expander(category, expanded=bool(search)):
+with st.expander(category, expanded=bool(search)):
 
-        if st.button(f"🧹 Clear {category}", key=f"clear_{category}"):
+    if st.button(f"🧹 Clear {category}", key=f"clear_{category}"):
 
-            for product in product_list:
+        for product in product_list:
+
+            key = f"qty_{category}_{product['name']}"
+            st.session_state[key] = 0
+
+            if product["name"] in st.session_state.cart:
+                del st.session_state.cart[product["name"]]
+
+        st.rerun()
+
+    # -------------------------
+    # Product Items
+    # -------------------------
+
+    for product in filtered_products:
+
+        with st.container(border=True):
+
+            img = load_image(product["image"])
+
+            # Horizontal layout
+            col_img, col_name, col_btn = st.columns([1,3,2])
+
+            # Image
+            with col_img:
+                st.image(img, width=60)
+
+            # Item name
+            with col_name:
+                st.markdown(
+                    f"""
+                    <div style="
+                        font-size:{TITLE_SIZE}px;
+                        font-weight:600;
+                        margin-top:10px;
+                    ">
+                    {product['name']}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+            # Buttons
+            with col_btn:
 
                 key = f"qty_{category}_{product['name']}"
-                st.session_state[key] = 0
 
-                if product["name"] in st.session_state.cart:
-                    del st.session_state.cart[product["name"]]
+                if key not in st.session_state:
+                    st.session_state[key] = 0
 
-            st.rerun()
+                b1, b2, b3 = st.columns([1,1,1])
 
-        # Responsive Columns
-        columns_count = 3 if is_mobile else 4
+                # Minus button
+                with b1:
 
-        for row in range(0, len(filtered_products), columns_count):
+                    if st.button(
+                        "-",
+                        key=f"minus_{category}_{product['name']}"
+                    ):
 
-            cols = st.columns(columns_count)
+                        if st.session_state[key] > 0:
 
-            for col_index in range(columns_count):
+                            st.session_state[key] -= 1
 
-                if row + col_index >= len(filtered_products):
-                    break
+                            if st.session_state[key] > 0:
+                                st.session_state.cart[product["name"]] = st.session_state[key]
+                            elif product["name"] in st.session_state.cart:
+                                del st.session_state.cart[product["name"]]
 
-                product = filtered_products[row + col_index]
+                            st.rerun()
 
-                with cols[col_index]:
+                # Quantity
+                with b2:
 
-                    with st.container(border=True):
+                    st.markdown(
+                        f"<p style='text-align:center;font-size:{QTY_SIZE}px'>{st.session_state[key]}</p>",
+                        unsafe_allow_html=True
+                    )
 
-                        st.markdown(
-                            f"""
-                            <div style="
-                                height:40px;
-                                font-size:{TITLE_SIZE}px;
-                                font-weight:700;
-                                display:flex;
-                                align-items:center;
-                                justify-content:center;
-                                text-align:center;
-                            ">
-                            {product['name']}
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
+                # Plus button
+                with b3:
 
-                        img = load_image(product["image"])
-                        img_size = IMG_SIZE
+                    if st.button(
+                        "+",
+                        key=f"plus_{category}_{product['name']}"
+                    ):
 
-                        left_img, mid_img, right_img = st.columns([1,2,1])
+                        if st.session_state[key] < 50:
 
-                        with mid_img:
-                            st.image(img, width=img_size)
+                            st.session_state[key] += 1
+                            st.session_state.cart[product["name"]] = st.session_state[key]
 
-                        key = f"qty_{category}_{product['name']}"
-
-                        if key not in st.session_state:
-                            st.session_state[key] = 0
-
-                        c1, c2, c3 = st.columns([1,1,1])
-
-                        with c1:
-
-                            if st.button(
-                                "-",
-                                key=f"minus_{category}_{product['name']}",
-                                use_container_width=True
-                            ):
-
-                                if st.session_state[key] > 0:
-
-                                    st.session_state[key] -= 1
-
-                                    if st.session_state[key] > 0:
-                                        st.session_state.cart[product["name"]] = st.session_state[key]
-                                    elif product["name"] in st.session_state.cart:
-                                        del st.session_state.cart[product["name"]]
-
-                                    st.rerun()
-
-                        with c2:
-
-                            st.markdown(
-                                f"<p style='text-align:center;font-size:{QTY_SIZE}px'>{st.session_state[key]}</p>",
-                                unsafe_allow_html=True
-                            )
-
-                        with c3:
-
-                            if st.button(
-                                "+",
-                                key=f"plus_{category}_{product['name']}",
-                                use_container_width=True
-                            ):
-
-                                if st.session_state[key] < 50:
-
-                                    st.session_state[key] += 1
-                                    st.session_state.cart[product["name"]] = st.session_state[key]
-
-                                    st.rerun()
+                            st.rerun()
 
 
 # =========================
