@@ -17,7 +17,10 @@ def load_image(path):
 
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="centered")
 
+if "mobile" not in st.session_state:
+    st.session_state.mobile = False
 
+st.sidebar.toggle("📱 Mobile Layout", key="mobile")
 
 # -----------------------------
 # UI Font Size
@@ -147,11 +150,15 @@ for category, product_list in products.items():
 
             st.rerun()
 
-        cols = st.columns(3)
+        # =========================
+        # Responsive Columns
+        # =========================
+
+        cols = st.columns(2) if st.session_state.get("mobile", False) else st.columns(3)
 
         for i, product in enumerate(filtered_products):
 
-            with cols[i % 3]:
+            with cols[i % len(cols)]:
 
                 # Anchor for sidebar jump
                 st.markdown(f"<a name='{product['name']}'></a>", unsafe_allow_html=True)
@@ -177,11 +184,13 @@ for category, product_list in products.items():
                 # =========================
                 # Centered Image
                 # =========================
+
                 left_img, mid_img, right_img = st.columns([1,2,1])
 
                 with mid_img:
                     img = load_image(product["image"])
-                    st.image(img, width=100)
+                    img_size = 120 if st.session_state.get("mobile", False) else 100
+                    st.image(img, width=img_size)
 
                 key = f"qty_{category}_{product['name']}"
 
@@ -192,6 +201,7 @@ for category, product_list in products.items():
                 # =========================
                 # Centered Quantity Control
                 # =========================
+
                 left, mid, right = st.columns([1,2,1])
 
                 with mid:
