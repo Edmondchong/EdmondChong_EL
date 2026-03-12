@@ -235,104 +235,95 @@ for category, product_list in products.items():
             st.rerun()
 
         # Responsive Columns
-        if is_mobile:
-            cols = st.columns(2)
-        else:
-            cols = st.columns(3)
-    
+        columns_count = 2 if is_mobile else 3
 
-        for i, product in enumerate(filtered_products):
+        for row in range(0, len(filtered_products), columns_count):
 
-            with cols[i % len(cols)]:
+            cols = st.columns(columns_count)
 
-                with st.container(border=True):
-                    st.markdown(
-                        """
-                        <style>
-                        div[data-testid="stVerticalBlock"] > div {
-                            padding-top:5px;
-                            padding-bottom:5px;
-                        }
-                        </style>
-                        """,
-                        unsafe_allow_html=True)
-                        
+            for col_index in range(columns_count):
 
-                    st.markdown(f"<a name='{product['name']}'></a>", unsafe_allow_html=True)
+                if row + col_index >= len(filtered_products):
+                    break
 
-                    st.markdown(
-                        f"""
-                        <div style="
-                            height:40px;
-                            font-size:{TITLE_SIZE}px;
-                            font-weight:700;
-                            display:flex;
-                            align-items:center;
-                            justify-content:center;
-                            text-align:center;
-                        ">
-                        {product['name']}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
+                product = filtered_products[row + col_index]
 
-                    img = load_image(product["image"])
+                with cols[col_index]:
 
-                    img_size = IMG_SIZE
-                    
-                    left_img, mid_img, right_img = st.columns([1,2,1])
-
-                    with mid_img:
-                        st.image(img, width=img_size)
-
-                    key = f"qty_{category}_{product['name']}"
-
-                    if key not in st.session_state:
-                        st.session_state[key] = 0
-
-                    c1, c2, c3 = st.columns([1,1,1])
-
-                    with c1:
-
-                        if st.button(
-                            "-",
-                            key=f"minus_{category}_{product['name']}",
-                            use_container_width=True
-                        ):
-
-                            if st.session_state[key] > 0:
-
-                                st.session_state[key] -= 1
-
-                                if st.session_state[key] > 0:
-                                    st.session_state.cart[product["name"]] = st.session_state[key]
-                                elif product["name"] in st.session_state.cart:
-                                    del st.session_state.cart[product["name"]]
-
-                                st.rerun()
-
-                    with c2:
+                    with st.container(border=True):
 
                         st.markdown(
-                            f"<p style='text-align:center;font-size:{QTY_SIZE}px'>{st.session_state[key]}</p>",
+                            f"""
+                            <div style="
+                                height:40px;
+                                font-size:{TITLE_SIZE}px;
+                                font-weight:700;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                text-align:center;
+                            ">
+                            {product['name']}
+                            </div>
+                            """,
                             unsafe_allow_html=True
                         )
 
-                    with c3:
+                        img = load_image(product["image"])
+                        img_size = IMG_SIZE
 
-                        if st.button(
-                            "+",
-                            key=f"plus_{category}_{product['name']}",
-                            use_container_width=True
-                        ):
+                        left_img, mid_img, right_img = st.columns([1,2,1])
 
-                            if st.session_state[key] < 50:
+                        with mid_img:
+                            st.image(img, width=img_size)
 
-                                st.session_state[key] += 1
-                                st.session_state.cart[product["name"]] = st.session_state[key]
+                        key = f"qty_{category}_{product['name']}"
 
-                                st.rerun()
+                        if key not in st.session_state:
+                            st.session_state[key] = 0
+
+                        c1, c2, c3 = st.columns([1,1,1])
+
+                        with c1:
+
+                            if st.button(
+                                "-",
+                                key=f"minus_{category}_{product['name']}",
+                                use_container_width=True
+                            ):
+
+                                if st.session_state[key] > 0:
+
+                                    st.session_state[key] -= 1
+
+                                    if st.session_state[key] > 0:
+                                        st.session_state.cart[product["name"]] = st.session_state[key]
+                                    elif product["name"] in st.session_state.cart:
+                                        del st.session_state.cart[product["name"]]
+
+                                    st.rerun()
+
+                        with c2:
+
+                            st.markdown(
+                                f"<p style='text-align:center;font-size:{QTY_SIZE}px'>{st.session_state[key]}</p>",
+                                unsafe_allow_html=True
+                            )
+
+                        with c3:
+
+                            if st.button(
+                                "+",
+                                key=f"plus_{category}_{product['name']}",
+                                use_container_width=True
+                            ):
+
+                                if st.session_state[key] < 50:
+
+                                    st.session_state[key] += 1
+                                    st.session_state.cart[product["name"]] = st.session_state[key]
+
+                                    st.rerun()
 
 
 # =========================
