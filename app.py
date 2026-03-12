@@ -133,7 +133,7 @@ with colA:
 with colB:
     date = st.date_input("Date")
 
-col1, col2, col3 = st.columns([5,1,1])
+col1, col2, col3 = st.columns([4,2,2])
 
 with col1:
     search_input = st.text_input(
