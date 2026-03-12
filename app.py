@@ -202,13 +202,24 @@ for category, product_list in products.items():
             st.rerun()
 
         # Responsive Columns
-        cols = st.columns(2) if is_mobile else st.columns(3)
+        cols = st.columns(2, gap="small") if is_mobile else st.columns(3)
 
         for i, product in enumerate(filtered_products):
 
             with cols[i % len(cols)]:
 
                 with st.container(border=True):
+                    st.markdown(
+                        """
+                        <style>
+                        div[data-testid="stVerticalBlock"] > div {
+                            padding-top:5px;
+                            padding-bottom:5px;
+                        }
+                        </style>
+                        """,
+                        unsafe_allow_html=True)
+                        
 
                     st.markdown(f"<a name='{product['name']}'></a>", unsafe_allow_html=True)
 
@@ -231,7 +242,7 @@ for category, product_list in products.items():
 
                     img = load_image(product["image"])
 
-                    img_size = 120 if is_mobile else 100
+                    img_size = 90 if is_mobile else 100
                     
                     left_img, mid_img, right_img = st.columns([1,2,1])
 
