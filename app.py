@@ -183,7 +183,7 @@ with col2:
 
 with col3:
     st.markdown("<div style='margin-top:32px'></div>", unsafe_allow_html=True)
-    if st.button("Clear", use_container_width=True):
+    if st.button("❌ Clear Search", use_container_width=True):
         st.session_state.search_text = ""
         st.rerun()
 
