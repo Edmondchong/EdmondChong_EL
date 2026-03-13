@@ -172,7 +172,7 @@ col1, col2, col3 = st.columns([5,2,2])
 with col1:
     search_input = st.text_input(
         "🔎 Search Equipment",
-        value=st.session_state.search_text
+        key="search_text"
     )
 
 with col2:
@@ -187,7 +187,7 @@ with col3:
         st.session_state.search_text = ""
         st.rerun()
 
-search = st.session_state.search_text.lower().strip()
+search = st.session_state.get("search_text","").lower().strip()
 
 # -----------------------------
 # Clear All
