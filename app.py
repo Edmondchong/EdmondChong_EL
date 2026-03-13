@@ -325,17 +325,18 @@ if st.session_state.get("mobile", False):
 # Sidebar Cart
 # =========================
 
-st.markdown(
-        "<p style='font-size:18px; color:White'>"
-        "System support contact: Edmond"
-        "</p>",
-        unsafe_allow_html=True
-)
-    
+
 with st.sidebar:
     
     st.markdown("<a name='sidebar'></a>", unsafe_allow_html=True)
 
+    st.markdown(
+        "<p style='font-size:18px; color:White'>"
+        "System support contact: Edmond"
+        "</p>",
+        unsafe_allow_html=True
+    )
+    
     if len(st.session_state.cart) == 0:
 
         st.header("🛒 Cart")
