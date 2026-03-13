@@ -99,7 +99,7 @@ search = st.session_state.search_text.lower().strip()
 # Clear All
 # -----------------------------
 
-if st.button("🧹 Clear All Items in Cart"):
+if st.button("🧹 Clear All"):
 
     st.session_state.cart = {}
 
@@ -305,47 +305,8 @@ with st.sidebar:
 
             excel_buffer = BytesIO()
 
-            excel_rows = []
-
-            for category, product_list in products.items():
-
-                for product in product_list:
-
-                    name = product["name"]
-
-                    if name in st.session_state.cart:
-
-                        excel_rows.append([
-                            category,
-                            name.replace("_"," "),
-                            st.session_state.cart[name]
-                        ])
-
-            df_excel = pd.DataFrame(excel_rows, columns=["Category", "Item", "Quantity"])
-
             with pd.ExcelWriter(excel_buffer, engine="xlsxwriter") as writer:
-
-                df_excel.to_excel(writer, index=False, startrow=3, sheet_name="Order")
-
-                workbook  = writer.book
-                worksheet = writer.sheets["Order"]
-
-                # Write Region and Date
-                worksheet.write("A1", f"Region : {region}")
-                worksheet.write("A2", f"Date : {date_str}")
-
-                # Adjust column width
-                worksheet.set_column("A:A", 20)
-                worksheet.set_column("B:B", 35)
-                worksheet.set_column("C:C", 10)
-
-                header_format = workbook.add_format({
-                    "bold": True,
-                    "border": 1
-                })
-
-                for col_num, value in enumerate(df_excel.columns.values):
-                    worksheet.write(3, col_num, value, header_format)
+                df.to_excel(writer, index=False, sheet_name="Order")
 
             st.download_button(
                 "📥 Download Excel",
