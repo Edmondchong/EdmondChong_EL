@@ -193,14 +193,16 @@ for category, product_list in products.items():
     with st.expander(category, expanded=bool(search)):
 
         if st.button(f"🧹 Clear {category}", key=f"clear_{category}"):
-
+            
+            # Remove from cart 
             for product in product_list:
-
-                key = f"qty_{category}_{product['name']}"
-                st.session_state[key] = 0
-
                 if product["name"] in st.session_state.cart:
                     del st.session_state.cart[product["name"]]
+            
+            # Reset quantity widgets
+            for product in product_list:
+                key = f"qty_{category}_{product['name']}"
+                st.session_state[key] = 0
 
             st.rerun()
 
