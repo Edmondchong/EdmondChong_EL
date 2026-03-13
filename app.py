@@ -12,10 +12,44 @@ from reportlab.lib import colors
 @st.cache_data
 def load_image(path):
     img = Image.open(path)
-    return img.resize((100,100))
+    return img.resize((1000,1000))
 
 
-st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="centered")
+st.set_page_config(page_title="(XLFM) Technical Team Equipment System", layout="wide")
+st.markdown("""
+<style>
+.block-container {
+    padding-top: 1rem;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<style>
+
+/* Center text inside number input */
+div[data-baseweb="input"] input {
+    text-align: center;
+}
+
+/* Reduce space between rows */
+div[data-testid="stVerticalBlock"] > div {
+    padding-bottom: 0.4rem;
+}
+
+/* Reduce gap inside containers */
+div[data-testid="stVerticalBlock"] {
+    gap: 0.4rem;
+}
+
+/* Make product cards tighter */
+div[data-testid="stContainer"] {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 # -----------------------------
 # Detect Mobile Screen Automatically
@@ -116,7 +150,7 @@ if "order_history" not in st.session_state:
     st.session_state.order_history = []
 
 
-st.title("(XLFM) Technical Team Equipment List System")
+st.title("(XLFM) Technical Team Equipment System")
 
 if "search_text" not in st.session_state:
     st.session_state.search_text = ""
@@ -133,7 +167,18 @@ with colA:
 with colB:
     date = st.date_input("Date")
 
-col1, col2, col3 = st.columns([5,1,1])
+
+# -----------------------------
+# Search Memory
+# -----------------------------
+if "search_text" not in st.session_state:
+    st.session_state.search_text = ""
+
+
+# -----------------------------
+# Search UI
+# -----------------------------
+col1, col2, col3 = st.columns([5,2,2])
 
 with col1:
     search_input = st.text_input(
@@ -143,16 +188,23 @@ with col1:
 
 with col2:
     st.markdown("<div style='margin-top:32px'></div>", unsafe_allow_html=True)
+
     if st.button("🔎 Search", use_container_width=True):
         st.session_state.search_text = search_input
         st.rerun()
 
+
 with col3:
     st.markdown("<div style='margin-top:32px'></div>", unsafe_allow_html=True)
-    if st.button("Clear", use_container_width=True):
+
+    if st.button("❌ Clear Search", use_container_width=True):
         st.session_state.search_text = ""
         st.rerun()
 
+
+# -----------------------------
+# Apply Search Filter
+# -----------------------------
 search = st.session_state.search_text.lower().strip()
 
 # -----------------------------
@@ -179,10 +231,11 @@ for category, product_list in products.items():
     filtered_products = []
 
     for product in product_list:
+
         product_name = product["name"].lower().replace("_"," ")
 
         if search:
-            if search.lower() in product_name:
+            if search in product_name:
                 filtered_products.append(product)
         else:
             filtered_products.append(product)
@@ -190,8 +243,21 @@ for category, product_list in products.items():
     if len(filtered_products) == 0:
         continue
 
-    with st.expander(category, expanded=bool(search)):
+    # -------------------------
+    # Remember Expander State
+    # -------------------------
+    expander_key = f"expander_{category}"
 
+    if expander_key not in st.session_state:
+        st.session_state[expander_key] = bool(search)
+
+    with st.expander(category, expanded=st.session_state[expander_key]):
+
+        st.session_state[expander_key] = True
+
+        # -------------------------
+        # Clear Category
+        # -------------------------
         if st.button(f"🧹 Clear {category}", key=f"clear_{category}"):
 
             for product in product_list:
@@ -204,7 +270,9 @@ for category, product_list in products.items():
 
             st.rerun()
 
+        # -------------------------
         # Responsive Columns
+        # -------------------------
         cols = st.columns(2) if st.session_state.get("mobile", False) else st.columns(3)
 
         for i, product in enumerate(filtered_products):
@@ -218,9 +286,10 @@ for category, product_list in products.items():
                     st.markdown(
                         f"""
                         <div style="
-                            height:50px;
-                            font-size:18px;
-                            font-weight:700;
+                            height:5px;
+                            margin-top:-25px;
+                            font-size:14px;
+                            font-weight:550;
                             display:flex;
                             align-items:center;
                             justify-content:center;
@@ -234,12 +303,10 @@ for category, product_list in products.items():
 
                     img = load_image(product["image"])
 
-                    img_size = 120 if st.session_state.get("mobile", False) else 100
-                    
-                    left_img, mid_img, right_img = st.columns([1,2,1])
+                    left_img, mid_img, right_img = st.columns([1,15,1])
 
                     with mid_img:
-                        st.image(img, width=img_size)
+                        st.image(img, use_container_width=True)
 
                     key = f"qty_{category}_{product['name']}"
 
@@ -248,6 +315,9 @@ for category, product_list in products.items():
 
                     c1, c2, c3 = st.columns([1,1,1])
 
+                    # -------------------
+                    # Minus Button
+                    # -------------------
                     with c1:
 
                         if st.button(
@@ -257,23 +327,11 @@ for category, product_list in products.items():
                         ):
 
                             if st.session_state[key] > 0:
-
                                 st.session_state[key] -= 1
 
-                                if st.session_state[key] > 0:
-                                    st.session_state.cart[product["name"]] = st.session_state[key]
-                                elif product["name"] in st.session_state.cart:
-                                    del st.session_state.cart[product["name"]]
-
-                                st.rerun()
-
-                    with c2:
-
-                        st.markdown(
-                            f"<p style='text-align:center;font-size:20px'>{st.session_state[key]}</p>",
-                            unsafe_allow_html=True
-                        )
-
+                    # -------------------
+                    # Plus Button
+                    # -------------------
                     with c3:
 
                         if st.button(
@@ -282,14 +340,34 @@ for category, product_list in products.items():
                             use_container_width=True
                         ):
 
-                            if st.session_state[key] < 50:
-
+                            if st.session_state[key] < 250:
                                 st.session_state[key] += 1
-                                st.session_state.cart[product["name"]] = st.session_state[key]
 
-                                st.rerun()
+                    # -------------------
+                    # Quantity Input
+                    # -------------------
+                    with c2:
 
+                        st.number_input(
+                            "",
+                            min_value=0,
+                            max_value=250,
+                            step=1,
+                            label_visibility="collapsed",
+                            key=key
+                        )
 
+                    # -------------------
+                    # Update Cart
+                    # -------------------
+
+                    qty_value = st.session_state[key]
+
+                    if qty_value > 0:
+                        st.session_state.cart[product["name"]] = qty_value
+                    elif product["name"] in st.session_state.cart:
+                        del st.session_state.cart[product["name"]]
+    
 # =========================
 # Mobile Sticky Cart Bar
 # =========================
@@ -336,6 +414,13 @@ with st.sidebar:
 
         total_items = sum(st.session_state.cart.values())
 
+        st.markdown(
+            "<p style='font-size:20px; color:white; margin-top:-10px;'>"
+            "System support contact: Edmond"
+            "</p>",
+            unsafe_allow_html=True
+        )
+        
         st.header(f"🛒 Cart ({total_items} items)")
 
         for category, product_list in products.items():
@@ -561,18 +646,10 @@ with st.sidebar:
     # =========================
     # Recent Orders
     # =========================
-
+        
     st.divider()
 
-    st.markdown(
-        "<p style='font-size:12px; color:gray'>"
-        "Developed by Edmond<br>"
-        "System support contact: Edmond"
-        "</p>",
-        unsafe_allow_html=True
-    )
-
-    st.subheader("Recent Orders")
+    st.subheader("Recent Orders:")
 
     if len(st.session_state.order_history) == 0:
 
