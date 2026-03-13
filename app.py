@@ -167,18 +167,8 @@ with colA:
 with colB:
     date = st.date_input("Date")
 
-
-# -----------------------------
-# Search Memory
-# -----------------------------
-if "search_text" not in st.session_state:
-    st.session_state.search_text = ""
-
-
-# -----------------------------
-# Search UI
-# -----------------------------
 col1, col2, col3 = st.columns([5,2,2])
+
 
 with col1:
     search_input = st.text_input(
@@ -187,24 +177,15 @@ with col1:
     )
 
 with col2:
-    st.markdown("<div style='margin-top:32px'></div>", unsafe_allow_html=True)
-
     if st.button("🔎 Search", use_container_width=True):
         st.session_state.search_text = search_input
         st.rerun()
 
-
 with col3:
-    st.markdown("<div style='margin-top:32px'></div>", unsafe_allow_html=True)
-
-    if st.button("❌ Clear Search", use_container_width=True):
+    if st.button("Clear", use_container_width=True):
         st.session_state.search_text = ""
         st.rerun()
 
-
-# -----------------------------
-# Apply Search Filter
-# -----------------------------
 search = st.session_state.search_text.lower().strip()
 
 # -----------------------------
