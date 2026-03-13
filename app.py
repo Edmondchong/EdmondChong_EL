@@ -8,192 +8,20 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 
+st.set_page_config(page_title="(XLFM) 技术组 Equipment List", layout="wide")
 
-@st.cache_data
-def load_image(path):
-    img = Image.open(path)
-    return img.resize((1000,1000))
-
-
-st.set_page_config(page_title="(XLFM) Technical Team Equipment System", layout="wide")
-st.markdown("""
-<style>
-.block-container {
-    padding-top: 1rem;
-}
-</style>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<style>
-
-/* Center text inside number input */
-div[data-baseweb="input"] input {
-    text-align: center;
-}
-
-/* Reduce space between rows */
-div[data-testid="stVerticalBlock"] > div {
-    padding-bottom: 0.4rem;
-}
-
-/* Reduce gap inside containers */
-div[data-testid="stVerticalBlock"] {
-    gap: 0.4rem;
-}
-
-/* Make product cards tighter */
-div[data-testid="stContainer"] {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-# -----------------------------
-# Detect Mobile Screen Automatically
-# -----------------------------
-st.markdown("""
-<script>
-function sendScreenWidth(){
-    const width = window.innerWidth;
-    const isMobile = width < 768;
-
-    const streamlitEvent = new CustomEvent("streamlit:setComponentValue", {
-        detail: {value: isMobile}
-    });
-
-    window.parent.document.dispatchEvent(streamlitEvent);
-}
-
-sendScreenWidth();
-window.addEventListener("resize", sendScreenWidth);
-</script>
-""", unsafe_allow_html=True)
-
-if "mobile" not in st.session_state:
-    st.session_state.mobile = False
-
-# -----------------------------
-# UI Font Size
-# -----------------------------
-st.markdown("""
-<style>
-
-/* Label text size */
-.stTextInput label,
-.stDateInput label {
-    font-size:18px !important;
-    font-weight:500;
-}
-
-/* Label paragraph */
-.stTextInput label p,
-.stDateInput label p {
-    font-size:18px !important;
-}
-
-/* Input box text */
-.stTextInput input {
-    font-size:18px !important;
-}
-
-/* =============================
-   Mobile Sticky Cart Bar
-   ============================= */
-
-.mobile-cart-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #1f1f1f;
-    border-top: 2px solid #444;
-    padding: 12px 20px;
-    z-index: 9999;
-}
-
-.mobile-cart-inner {
-    max-width: 700px;
-    margin: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.mobile-cart-text {
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.mobile-cart-btn {
-    background-color: #ff8c00;
-    padding: 8px 16px;
-    border-radius: 6px;
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-# -----------------------------
-# Session Memory
-# -----------------------------
-
+# cart memory
 if "cart" not in st.session_state:
     st.session_state.cart = {}
 
+# order history memory
 if "order_history" not in st.session_state:
     st.session_state.order_history = []
 
+st.title("(XLFM) 技术组 Equipment List")
 
-st.title("(XLFM) Technical Team Equipment System")
-
-if "search_text" not in st.session_state:
-    st.session_state.search_text = ""
-
-# -----------------------------
-# Region + Date
-# -----------------------------
-
-colA, colB = st.columns(2)
-
-with colA:
-    region = st.text_input("Region")
-
-with colB:
-    date = st.date_input("Date")
-
-col1, col2, col3 = st.columns([5,2,2])
-
-with col1:
-    search_input = st.text_input(
-        "🔎 Search Equipment",
-        key="search_text"
-    )
-
-with col2:
-    st.markdown("<div style='margin-top:32px'></div>", unsafe_allow_html=True)
-    if st.button("🔎 Search", use_container_width=True):
-        st.session_state.search_text = search_input
-        st.rerun()
-
-with col3:
-    st.markdown("<div style='margin-top:32px'></div>", unsafe_allow_html=True)
-    if st.button("❌ Clear Search", use_container_width=True):
-        st.session_state.search_text = ""
-        st.rerun()
-
-search = st.session_state.get("search_text","").lower().strip()
-
-# -----------------------------
-# Clear All
-# -----------------------------
-
-if st.button("🧹 Clear All Items in Cart"):
+# Clear All Button
+if st.button("🧹 Clear All"):
 
     st.session_state.cart = {}
 
@@ -204,42 +32,24 @@ if st.button("🧹 Clear All Items in Cart"):
 
     st.rerun()
 
+# Region + Date input
+colA, colB = st.columns(2)
+
+with colA:
+    region = st.text_input("Region")
+
+with colB:
+    date = st.date_input("Date")
+
 # =========================
-# Products
+# Category + Products
 # =========================
 
 for category, product_list in products.items():
 
-    filtered_products = []
+    with st.expander(category):
 
-    for product in product_list:
-
-        product_name = product["name"].lower().replace("_"," ")
-
-        if search:
-            if search in product_name:
-                filtered_products.append(product)
-        else:
-            filtered_products.append(product)
-
-    if len(filtered_products) == 0:
-        continue
-
-    # -------------------------
-    # Remember Expander State
-    # -------------------------
-    expander_key = f"expander_{category}"
-
-    if expander_key not in st.session_state:
-        st.session_state[expander_key] = bool(search)
-
-    with st.expander(category, expanded=st.session_state[expander_key]):
-
-        st.session_state[expander_key] = True
-
-        # -------------------------
-        # Clear Category
-        # -------------------------
+        # Clear Category Button
         if st.button(f"🧹 Clear {category}", key=f"clear_{category}"):
 
             for product in product_list:
@@ -252,218 +62,76 @@ for category, product_list in products.items():
 
             st.rerun()
 
-        # -------------------------
-        # Responsive Columns
-        # -------------------------
-        cols = st.columns(2) if st.session_state.get("mobile", False) else st.columns(3)
+        cols = st.columns([1,1,1])
 
-        for i, product in enumerate(filtered_products):
+        for i, product in enumerate(product_list):
 
-            with cols[i % len(cols)]:
+            with cols[i % 3]:
 
-                with st.container(border=True):
+                st.markdown(f"### {product['name']}")
 
-                    st.markdown(f"<a name='{product['name']}'></a>", unsafe_allow_html=True)
+                img = Image.open(product["image"])
+                img = img.resize((230,230))
 
+                st.image(img, use_container_width=True)
+
+                key = f"qty_{category}_{product['name']}"
+
+                if key not in st.session_state:
+                    st.session_state[key] = 0
+
+                c1, c2, c3 = st.columns([1,2,1])
+
+                with c1:
+                    if st.button("-", key=f"minus_{category}_{product['name']}"):
+
+                        if st.session_state[key] > 0:
+
+                            st.session_state[key] -= 1
+
+                            if st.session_state[key] > 0:
+                                st.session_state.cart[product["name"]] = st.session_state[key]
+                            elif product["name"] in st.session_state.cart:
+                                del st.session_state.cart[product["name"]]
+
+                            st.rerun()
+
+                with c2:
                     st.markdown(
-                        f"""
-                        <div style="
-                            height:5px;
-                            margin-top:-25px;
-                            font-size:14px;
-                            font-weight:550;
-                            display:flex;
-                            align-items:center;
-                            justify-content:center;
-                            text-align:center;
-                        ">
-                        {product['name']}
-                        </div>
-                        """,
+                        f"<h3 style='text-align:center'>{st.session_state[key]}</h3>",
                         unsafe_allow_html=True
                     )
 
-                    img = load_image(product["image"])
+                with c3:
+                    if st.button("+", key=f"plus_{category}_{product['name']}"):
 
-                    left_img, mid_img, right_img = st.columns([1,15,1])
+                        if st.session_state[key] < 50:
 
-                    with mid_img:
-                        st.image(img, use_container_width=True)
+                            st.session_state[key] += 1
+                            st.session_state.cart[product["name"]] = st.session_state[key]
 
-                    key = f"qty_{category}_{product['name']}"
-
-                    if key not in st.session_state:
-                        st.session_state[key] = 0
-
-                    c1, c2, c3 = st.columns([1,1,1])
-
-                    # -------------------
-                    # Minus Button
-                    # -------------------
-                    with c1:
-
-                        if st.button(
-                            "-",
-                            key=f"minus_{category}_{product['name']}",
-                            use_container_width=True
-                        ):
-
-                            if st.session_state[key] > 0:
-                                st.session_state[key] -= 1
-
-                    # -------------------
-                    # Plus Button
-                    # -------------------
-                    with c3:
-
-                        if st.button(
-                            "+",
-                            key=f"plus_{category}_{product['name']}",
-                            use_container_width=True
-                        ):
-
-                            if st.session_state[key] < 250:
-                                st.session_state[key] += 1
-
-                    # -------------------
-                    # Quantity Input
-                    # -------------------
-                    with c2:
-
-                        st.number_input(
-                            "",
-                            min_value=0,
-                            max_value=250,
-                            step=1,
-                            label_visibility="collapsed",
-                            key=key
-                        )
-
-                    # -------------------
-                    # Update Cart
-                    # -------------------
-
-                    qty_value = st.session_state[key]
-
-                    if qty_value > 0:
-                        st.session_state.cart[product["name"]] = qty_value
-                    elif product["name"] in st.session_state.cart:
-                        del st.session_state.cart[product["name"]]
-    
-# =========================
-# Mobile Sticky Cart Bar
-# =========================
-
-if st.session_state.get("mobile", False):
-
-    total_items = sum(st.session_state.cart.values())
-
-    if total_items > 0:
-
-        st.markdown(
-            f"""
-            <div class="mobile-cart-bar">
-                <div class="mobile-cart-inner">
-
-                    <div class="mobile-cart-text">
-                        🛒 {total_items} items in cart
-                    </div>
-
-                    <a href="#sidebar" class="mobile-cart-btn">
-                        Open Cart
-                    </a>
-
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        
+                            st.rerun()
 # =========================
 # Sidebar Cart
 # =========================
 
 with st.sidebar:
-    
-    st.markdown("<a name='sidebar'></a>", unsafe_allow_html=True)
+
+    st.header("🛒 Cart")
 
     if len(st.session_state.cart) == 0:
-
-        st.header("🛒 Cart")
         st.write("Cart is empty")
 
     else:
 
-        total_items = sum(st.session_state.cart.values())
+        for item, units in st.session_state.cart.items():
 
-        st.markdown(
-            "<p style='font-size:20px; color:white; margin-top:-10px;'>"
-            "System support contact: Edmond"
-            "</p>",
-            unsafe_allow_html=True
-        )
-        
-        st.header(f"🛒 Cart ({total_items} items)")
-
-        for category, product_list in products.items():
-
-            category_items = []
-            category_total = 0
-
-            for product in product_list:
-
-                name = product["name"]
-
-                if name in st.session_state.cart:
-
-                    qty = st.session_state.cart[name]
-
-                    category_items.append((name.replace("_"," "), qty))
-                    category_total += qty
-
-            if category_items:
-
-                with st.expander(f"{category} ({category_total})", expanded=True):
-
-                    for item, qty in category_items:
-
-                        product_anchor = item.replace(" ", "_")
-
-                        st.markdown(f"""
-                        <a href="#{product_anchor}" style="text-decoration:none;">
-                            <div style="
-                                padding:10px;
-                                margin-bottom:8px;
-                                border-radius:10px;
-                                background-color:#1f1f1f;
-                                border:1px solid #333;
-                                display:flex;
-                                justify-content:space-between;
-                                align-items:center;
-                            ">
-                                <div style="font-weight:600;">{item}</div>
-                                <div style="
-                                    font-size:15px;
-                                    color:#ffb84d;
-                                    font-weight:600;
-                                ">
-                                    x{qty}
-                                </div>
-                            </div>
-                        </a>
-                        """, unsafe_allow_html=True)
+            display_name = item.replace("_", " ")
+            st.write(f"{display_name}  x  {units}")
 
         st.divider()
 
-        # =========================
-        # Checkout
-        # =========================
-
-        if st.button("🚀 Check Out!", use_container_width=True):
-
-            if region.strip() == "":
-                st.warning("Please enter Region before Checkout!")
-                st.stop()
+        if st.button("Check Out!"):
 
             safe_region = region.replace(" ", "_")
             date_str = date.strftime("%d-%m-%Y")
@@ -483,7 +151,7 @@ with st.sidebar:
                 "Quantity": order_data["Quantity"]
             })
 
-            # Save order history
+            # 保存最近订单
             st.session_state.order_history.insert(0, order_data)
             st.session_state.order_history = st.session_state.order_history[:3]
 
@@ -496,51 +164,14 @@ with st.sidebar:
 
             excel_buffer = BytesIO()
 
-            excel_rows = []
-
-            for category, product_list in products.items():
-
-                for product in product_list:
-
-                    name = product["name"]
-
-                    if name in st.session_state.cart:
-
-                        excel_rows.append([
-                            category,
-                            name.replace("_"," "),
-                            st.session_state.cart[name]
-                        ])
-
-            df_excel = pd.DataFrame(excel_rows, columns=["Category", "Item", "Quantity"])
-
             with pd.ExcelWriter(excel_buffer, engine="xlsxwriter") as writer:
+                df.to_excel(writer, index=False, sheet_name="Order")
 
-                df_excel.to_excel(writer, index=False, startrow=3, sheet_name="Order")
-
-                workbook  = writer.book
-                worksheet = writer.sheets["Order"]
-
-                # Write Region and Date
-                worksheet.write("A1", f"Region : {region}")
-                worksheet.write("A2", f"Date : {date_str}")
-
-                # Adjust column width
-                worksheet.set_column("A:A", 20)
-                worksheet.set_column("B:B", 35)
-                worksheet.set_column("C:C", 10)
-
-                header_format = workbook.add_format({
-                    "bold": True,
-                    "border": 1
-                })
-
-                for col_num, value in enumerate(df_excel.columns.values):
-                    worksheet.write(3, col_num, value, header_format)
+            excel_data = excel_buffer.getvalue()
 
             st.download_button(
-                "📥 Download Excel",
-                data=excel_buffer.getvalue(),
+                label="📥 Download Excel",
+                data=excel_data,
                 file_name=f"{file_name}.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
@@ -551,6 +182,11 @@ with st.sidebar:
 
             pdf_buffer = BytesIO()
 
+            data = [["Items", "Quantity"]]
+
+            for item, qty in zip(order_data["Items"], order_data["Quantity"]):
+                data.append([item, qty])
+
             pdf = SimpleDocTemplate(
                 pdf_buffer,
                 pagesize=A4,
@@ -559,7 +195,18 @@ with st.sidebar:
                 rightMargin=40,
             )
 
-            elements = []
+            table = Table(data, colWidths=[350,150], hAlign="CENTER")
+
+            table.setStyle(TableStyle([
+                ("BACKGROUND", (0,0), (-1,0), colors.orange),
+                ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
+                ("GRID", (0,0), (-1,-1), 1, colors.black),
+                ("ALIGN", (1,1), (1,-1), "CENTER"),
+                ("ALIGN", (0,0), (-1,0), "CENTER"),
+                ("FONTSIZE", (0,0), (-1,-1), 11),
+                ("BOTTOMPADDING", (0,0), (-1,-1), 4),
+                ("TOPPADDING", (0,0), (-1,-1), 4),
+            ]))
 
             styles = getSampleStyleSheet()
 
@@ -573,68 +220,29 @@ with st.sidebar:
                 styles["Normal"]
             )
 
-            elements.append(title)
-            elements.append(Spacer(1,10))
-            elements.append(info)
-            elements.append(Spacer(1,10))
+            space = Spacer(1,6)
 
-            for category, product_list in products.items():
-
-                category_items = []
-
-                for product in product_list:
-
-                    name = product["name"]
-
-                    if name in st.session_state.cart:
-                        qty = st.session_state.cart[name]
-                        category_items.append((name.replace("_"," "), qty))
-
-                if category_items:
-
-                    data = [[f"{category} (Items)", "Quantity"]]
-
-                    for item, qty in category_items:
-                        data.append([item, qty])
-
-                    table = Table(data, colWidths=[380,120], hAlign="CENTER")
-
-                    table.setStyle(TableStyle([
-                        ("BACKGROUND", (0,0), (-1,0), colors.orange),
-                        ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
-                        ("GRID", (0,0), (-1,-1), 1, colors.black),
-                        ("ALIGN", (1,1), (1,-1), "CENTER"),
-                        ("ALIGN", (0,0), (-1,0), "CENTER"),
-                        ("FONTSIZE", (0,0), (-1,-1), 11),
-                        ("BOTTOMPADDING", (0,0), (-1,-1), 4),
-                        ("TOPPADDING", (0,0), (-1,-1), 4),
-                    ]))
-
-                    elements.append(table)
-                    elements.append(Spacer(1,12))
+            elements = [title, space, info, space, table]
 
             pdf.build(elements)
 
             pdf_buffer.seek(0)
 
             st.download_button(
-                "📥 Download PDF",
+                label="📥 Download PDF",
                 data=pdf_buffer,
                 file_name=f"{file_name}.pdf",
                 mime="application/pdf"
             )
 
+    # =========================
+    # Recent Orders (Card UI)
+    # =========================
 
-    # =========================
-    # Recent Orders
-    # =========================
-        
     st.divider()
-
-    st.subheader("Recent Orders:")
+    st.subheader("Recent Orders")
 
     if len(st.session_state.order_history) == 0:
-
         st.write("No previous orders")
 
     else:
@@ -645,7 +253,7 @@ with st.sidebar:
 
                 labels = ["🟢 Latest", "🟡 Second Latest", "⚪ Oldest"]
                 label = labels[i] if i < len(labels) else f"Order {i+1}"
-
+                
                 st.markdown(f"**{label}**")
                 st.write(f"Region : {order['Region']}")
                 st.write(f"Date : {order['Date']}")
@@ -657,13 +265,16 @@ with st.sidebar:
 
                 if st.button("Load Order", key=f"load_order_{i}"):
 
+                    # 清空当前 cart
                     st.session_state.cart = {}
 
+                    # reset 所有数量
                     for category, product_list in products.items():
                         for product in product_list:
                             key = f"qty_{category}_{product['name']}"
                             st.session_state[key] = 0
 
+                    # 恢复订单
                     for item, qty in zip(order["Items"], order["Quantity"]):
 
                         product_name = item.replace(" ", "_")
