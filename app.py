@@ -8,19 +8,49 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 
-st.set_page_config(page_title="(XLFM) 技术组 Equipment List", layout="wide")
 
-# cart memory
+@st.cache_data
+def load_image(path):
+    img = Image.open(path)
+    return img.resize((230,230))
+
+
+st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="wide")
+
+
+# -----------------------------
+# Session Memory
+# -----------------------------
+
 if "cart" not in st.session_state:
     st.session_state.cart = {}
 
-# order history memory
 if "order_history" not in st.session_state:
     st.session_state.order_history = []
 
-st.title("(XLFM) 技术组 Equipment List")
 
-# Clear All Button
+st.title("(XLFM) Technical Team Equipment List System")
+
+
+
+# -----------------------------
+# Region + Date
+# -----------------------------
+
+colA, colB = st.columns(2)
+
+with colA:
+    region = st.text_input("Region")
+
+with colB:
+    date = st.date_input("Date")
+
+search = st.text_input("🔎 Search Equipment")
+
+# -----------------------------
+# Clear All
+# -----------------------------
+
 if st.button("🧹 Clear All"):
 
     st.session_state.cart = {}
@@ -32,24 +62,30 @@ if st.button("🧹 Clear All"):
 
     st.rerun()
 
-# Region + Date input
-colA, colB = st.columns(2)
-
-with colA:
-    region = st.text_input("Region")
-
-with colB:
-    date = st.date_input("Date")
-
 # =========================
-# Category + Products
+# Products
 # =========================
 
 for category, product_list in products.items():
 
-    with st.expander(category):
+    # -------- Filter products based on search --------
+    filtered_products = []
 
-        # Clear Category Button
+    for product in product_list:
+        product_name = product["name"].lower().replace("_"," ")
+
+        if search:
+            if search.lower() in product_name:
+                filtered_products.append(product)
+        else:
+            filtered_products.append(product)
+
+    # If no result in this category → hide category
+    if len(filtered_products) == 0:
+        continue
+
+    with st.expander(category, expanded=bool(search)):
+
         if st.button(f"🧹 Clear {category}", key=f"clear_{category}"):
 
             for product in product_list:
@@ -62,17 +98,18 @@ for category, product_list in products.items():
 
             st.rerun()
 
-        cols = st.columns([1,1,1])
+        cols = st.columns(3)
 
-        for i, product in enumerate(product_list):
+        for i, product in enumerate(filtered_products):
 
             with cols[i % 3]:
 
+                # ANCHOR FOR JUMP
+                st.markdown(f"<a name='{product['name']}'></a>", unsafe_allow_html=True)
+
                 st.markdown(f"### {product['name']}")
 
-                img = Image.open(product["image"])
-                img = img.resize((230,230))
-
+                img = load_image(product["image"])
                 st.image(img, use_container_width=True)
 
                 key = f"qty_{category}_{product['name']}"
@@ -111,27 +148,83 @@ for category, product_list in products.items():
                             st.session_state.cart[product["name"]] = st.session_state[key]
 
                             st.rerun()
+
 # =========================
 # Sidebar Cart
 # =========================
 
 with st.sidebar:
 
-    st.header("🛒 Cart")
-
     if len(st.session_state.cart) == 0:
+
+        st.header("🛒 Cart")
         st.write("Cart is empty")
 
     else:
 
-        for item, units in st.session_state.cart.items():
+        total_items = sum(st.session_state.cart.values())
 
-            display_name = item.replace("_", " ")
-            st.write(f"{display_name}  x  {units}")
+        st.header(f"🛒 Cart ({total_items} items)")
+
+        for category, product_list in products.items():
+
+            category_items = []
+            category_total = 0
+
+            for product in product_list:
+
+                name = product["name"]
+
+                if name in st.session_state.cart:
+
+                    qty = st.session_state.cart[name]
+
+                    category_items.append((name.replace("_"," "), qty))
+                    category_total += qty
+
+            if category_items:
+
+                with st.expander(f"{category} ({category_total})", expanded=True):
+
+                    for item, qty in category_items:
+
+                        product_anchor = item.replace(" ", "_")
+
+                        st.markdown(f"""
+                        <a href="#{product_anchor}" style="text-decoration:none;">
+                            <div style="
+                                padding:10px;
+                                margin-bottom:8px;
+                                border-radius:10px;
+                                background-color:#1f1f1f;
+                                border:1px solid #333;
+                                display:flex;
+                                justify-content:space-between;
+                                align-items:center;
+                            ">
+                                <div style="font-weight:600;">{item}</div>
+                                <div style="
+                                    font-size:14px;
+                                    color:#ffb84d;
+                                    font-weight:600;
+                                ">
+                                    x{qty}
+                                </div>
+                            </div>
+                        </a>
+                        """, unsafe_allow_html=True)
 
         st.divider()
 
+        # =========================
+        # Checkout
+        # =========================
+
         if st.button("Check Out!"):
+
+            if region.strip() == "":
+                st.warning("Please enter Region before Checkout!")
+                st.stop()
 
             safe_region = region.replace(" ", "_")
             date_str = date.strftime("%d-%m-%Y")
@@ -151,7 +244,7 @@ with st.sidebar:
                 "Quantity": order_data["Quantity"]
             })
 
-            # 保存最近订单
+            # Save order history
             st.session_state.order_history.insert(0, order_data)
             st.session_state.order_history = st.session_state.order_history[:3]
 
@@ -167,11 +260,9 @@ with st.sidebar:
             with pd.ExcelWriter(excel_buffer, engine="xlsxwriter") as writer:
                 df.to_excel(writer, index=False, sheet_name="Order")
 
-            excel_data = excel_buffer.getvalue()
-
             st.download_button(
-                label="📥 Download Excel",
-                data=excel_data,
+                "📥 Download Excel",
+                data=excel_buffer.getvalue(),
                 file_name=f"{file_name}.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
@@ -182,11 +273,6 @@ with st.sidebar:
 
             pdf_buffer = BytesIO()
 
-            data = [["Items", "Quantity"]]
-
-            for item, qty in zip(order_data["Items"], order_data["Quantity"]):
-                data.append([item, qty])
-
             pdf = SimpleDocTemplate(
                 pdf_buffer,
                 pagesize=A4,
@@ -195,18 +281,7 @@ with st.sidebar:
                 rightMargin=40,
             )
 
-            table = Table(data, colWidths=[350,150], hAlign="CENTER")
-
-            table.setStyle(TableStyle([
-                ("BACKGROUND", (0,0), (-1,0), colors.orange),
-                ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
-                ("GRID", (0,0), (-1,-1), 1, colors.black),
-                ("ALIGN", (1,1), (1,-1), "CENTER"),
-                ("ALIGN", (0,0), (-1,0), "CENTER"),
-                ("FONTSIZE", (0,0), (-1,-1), 11),
-                ("BOTTOMPADDING", (0,0), (-1,-1), 4),
-                ("TOPPADDING", (0,0), (-1,-1), 4),
-            ]))
+            elements = []
 
             styles = getSampleStyleSheet()
 
@@ -220,29 +295,76 @@ with st.sidebar:
                 styles["Normal"]
             )
 
-            space = Spacer(1,6)
+            elements.append(title)
+            elements.append(Spacer(1,10))
+            elements.append(info)
+            elements.append(Spacer(1,10))
 
-            elements = [title, space, info, space, table]
+            for category, product_list in products.items():
+
+                category_items = []
+
+                for product in product_list:
+
+                    name = product["name"]
+
+                    if name in st.session_state.cart:
+                        qty = st.session_state.cart[name]
+                        category_items.append((name.replace("_"," "), qty))
+
+                if category_items:
+
+                    data = [[f"{category} (Items)", "Quantity"]]
+
+                    for item, qty in category_items:
+                        data.append([item, qty])
+
+                    table = Table(data, colWidths=[380,120], hAlign="CENTER")
+
+                    table.setStyle(TableStyle([
+                        ("BACKGROUND", (0,0), (-1,0), colors.orange),
+                        ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
+                        ("GRID", (0,0), (-1,-1), 1, colors.black),
+                        ("ALIGN", (1,1), (1,-1), "CENTER"),
+                        ("ALIGN", (0,0), (-1,0), "CENTER"),
+                        ("FONTSIZE", (0,0), (-1,-1), 11),
+                        ("BOTTOMPADDING", (0,0), (-1,-1), 4),
+                        ("TOPPADDING", (0,0), (-1,-1), 4),
+                    ]))
+
+                    elements.append(table)
+                    elements.append(Spacer(1,12))
 
             pdf.build(elements)
 
             pdf_buffer.seek(0)
 
             st.download_button(
-                label="📥 Download PDF",
+                "📥 Download PDF",
                 data=pdf_buffer,
                 file_name=f"{file_name}.pdf",
                 mime="application/pdf"
             )
 
+
     # =========================
-    # Recent Orders (Card UI)
+    # Recent Orders
     # =========================
 
     st.divider()
+
+    st.markdown(
+        "<p style='font-size:12px; color:gray'>"
+        "Developed by Edmond<br>"
+        "System support contact: Edmond"
+        "</p>",
+        unsafe_allow_html=True
+    )
+
     st.subheader("Recent Orders")
 
     if len(st.session_state.order_history) == 0:
+
         st.write("No previous orders")
 
     else:
@@ -253,7 +375,7 @@ with st.sidebar:
 
                 labels = ["🟢 Latest", "🟡 Second Latest", "⚪ Oldest"]
                 label = labels[i] if i < len(labels) else f"Order {i+1}"
-                
+
                 st.markdown(f"**{label}**")
                 st.write(f"Region : {order['Region']}")
                 st.write(f"Date : {order['Date']}")
@@ -265,16 +387,13 @@ with st.sidebar:
 
                 if st.button("Load Order", key=f"load_order_{i}"):
 
-                    # 清空当前 cart
                     st.session_state.cart = {}
 
-                    # reset 所有数量
                     for category, product_list in products.items():
                         for product in product_list:
                             key = f"qty_{category}_{product['name']}"
                             st.session_state[key] = 0
 
-                    # 恢复订单
                     for item, qty in zip(order["Items"], order["Quantity"]):
 
                         product_name = item.replace(" ", "_")
