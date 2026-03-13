@@ -19,6 +19,33 @@ st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", lay
 
 
 # -----------------------------
+# UI Font Size
+# -----------------------------
+st.markdown("""
+<style>
+
+/* Label text size */
+.stTextInput label,
+.stDateInput label {
+    font-size:18px !important;
+    font-weight:500;
+}
+
+/* Label paragraph */
+.stTextInput label p,
+.stDateInput label p {
+    font-size:18px !important;
+}
+
+/* Input box text */
+.stTextInput input {
+    font-size:18px !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# -----------------------------
 # Session Memory
 # -----------------------------
 
@@ -31,7 +58,8 @@ if "order_history" not in st.session_state:
 
 st.title("(XLFM) Technical Team Equipment List System")
 
-
+if "search_text" not in st.session_state:
+    st.session_state.search_text = ""
 
 # -----------------------------
 # Region + Date
@@ -45,13 +73,33 @@ with colA:
 with colB:
     date = st.date_input("Date")
 
-search = st.text_input("🔎 Search Equipment")
+col1, col2, col3 = st.columns([5,1,1])
+
+with col1:
+    search_input = st.text_input(
+        "🔎 Search Equipment",
+        value=st.session_state.search_text
+    )
+
+with col2:
+    st.markdown("<div style='margin-top:32px'></div>", unsafe_allow_html=True)
+    if st.button("🔎 Search", use_container_width=True):
+        st.session_state.search_text = search_input
+        st.rerun()
+
+with col3:
+    st.markdown("<div style='margin-top:32px'></div>", unsafe_allow_html=True)
+    if st.button("Clear", use_container_width=True):
+        st.session_state.search_text = ""
+        st.rerun()
+
+search = st.session_state.search_text.lower().strip()
 
 # -----------------------------
 # Clear All
 # -----------------------------
 
-if st.button("🧹 Clear All"):
+if st.button("🧹 Clear All Items in Cart"):
 
     st.session_state.cart = {}
 
@@ -204,7 +252,7 @@ with st.sidebar:
                             ">
                                 <div style="font-weight:600;">{item}</div>
                                 <div style="
-                                    font-size:14px;
+                                    font-size:18px;
                                     color:#ffb84d;
                                     font-weight:600;
                                 ">
@@ -257,8 +305,47 @@ with st.sidebar:
 
             excel_buffer = BytesIO()
 
+            excel_rows = []
+
+            for category, product_list in products.items():
+
+                for product in product_list:
+
+                    name = product["name"]
+
+                    if name in st.session_state.cart:
+
+                        excel_rows.append([
+                            category,
+                            name.replace("_"," "),
+                            st.session_state.cart[name]
+                        ])
+
+            df_excel = pd.DataFrame(excel_rows, columns=["Category", "Item", "Quantity"])
+
             with pd.ExcelWriter(excel_buffer, engine="xlsxwriter") as writer:
-                df.to_excel(writer, index=False, sheet_name="Order")
+
+                df_excel.to_excel(writer, index=False, startrow=3, sheet_name="Order")
+
+                workbook  = writer.book
+                worksheet = writer.sheets["Order"]
+
+                # Write Region and Date
+                worksheet.write("A1", f"Region : {region}")
+                worksheet.write("A2", f"Date : {date_str}")
+
+                # Adjust column width
+                worksheet.set_column("A:A", 20)
+                worksheet.set_column("B:B", 35)
+                worksheet.set_column("C:C", 10)
+
+                header_format = workbook.add_format({
+                    "bold": True,
+                    "border": 1
+                })
+
+                for col_num, value in enumerate(df_excel.columns.values):
+                    worksheet.write(3, col_num, value, header_format)
 
             st.download_button(
                 "📥 Download Excel",
