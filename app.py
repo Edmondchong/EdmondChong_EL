@@ -247,6 +247,8 @@ for category, product_list in products.items():
                             align-items:center;
                             justify-content:center;
                             text-align:center;
+                            padding-top:5px;
+                            margin-bottom:5px;
                         ">
                         {product['name']}
                         </div>
