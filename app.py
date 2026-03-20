@@ -211,12 +211,12 @@ for category, product_list in products.items():
     with st.expander(category, expanded=bool(search)):
 
         if st.button(f"🧹 Clear {category}", key=f"clear_{category}"):
-            
+
             # Remove from cart 
             for product in product_list:
                 if product["name"] in st.session_state.cart:
                     del st.session_state.cart[product["name"]]
-            
+
             # Reset quantity widgets
             for product in product_list:
                 key = f"qty_{category}_{product['name']}"
@@ -232,68 +232,115 @@ for category, product_list in products.items():
             with cols[i % len(cols)]:
 
                 with st.container(border=True):
-                    
+
                     anchor = product['name'].replace(" ", "_")
-
-                    st.markdown(f"<div  id='{anchor}'></div>", unsafe_allow_html=True)
-
-                    st.markdown(
-                        f"""
-                        <div style="
-                            font-size:15px;
-                            font-weight:550;
-                            text-align:center;
-                            margin-top:-35px;
-                            margin-bottom:2px;
-                        ">
-                        {product['name'].replace("_"," ")}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-                    img = load_image(product["image"])
-
-                    img_size = 160 if st.session_state.get("mobile", False) else 100
-                    
-                    left_img, mid_img, right_img = st.columns([1,5,1])
-
-                    
-                    st.image(img, use_column_width=True)
+                    st.markdown(f"<div id='{anchor}'></div>", unsafe_allow_html=True)
 
                     key = f"qty_{category}_{product['name']}"
-
                     if key not in st.session_state:
                         st.session_state[key] = 0
 
-                    c1, c2, c3 = st.columns([1,1,1])
+                    img = load_image(product["image"])
 
-                    # ✅ FIXED: buttons MUST be inside this block
-                    with c1:
-                        st.button(
-                            "-",
-                            key=f"minus_{category}_{product['name']}",
-                            on_click=decrease_qty,
-                            args=(key, product["name"]),
-                            use_container_width=True
-                        )
+                    # =========================
+                    # 📱 MOBILE MODE (HORIZONTAL)
+                    # =========================
+                    if st.session_state.get("mobile", False):
 
-                    with c2:
+                        col1, col2, col3 = st.columns([1.2, 3, 2])
+
+                        with col1:
+                            st.image(img, use_column_width=True)
+
+                        with col2:
+                            st.markdown(
+                                f"""
+                                <div style="
+                                    font-size:15px;
+                                    font-weight:550;
+                                    line-height:1.3;
+                                ">
+                                {product['name'].replace("_"," ")}
+                                </div>
+                                """,
+                                unsafe_allow_html=True
+                            )
+
+                        with col3:
+                            b1, b2, b3 = st.columns([1,1,1])
+
+                            with b1:
+                                st.button(
+                                    "-",
+                                    key=f"minus_{category}_{product['name']}",
+                                    on_click=decrease_qty,
+                                    args=(key, product["name"]),
+                                    use_container_width=True
+                                )
+
+                            with b2:
+                                st.markdown(
+                                    f"<p style='text-align:center;font-size:16px'>{st.session_state[key]}</p>",
+                                    unsafe_allow_html=True
+                                )
+
+                            with b3:
+                                st.button(
+                                    "+",
+                                    key=f"plus_{category}_{product['name']}",
+                                    on_click=increase_qty,
+                                    args=(key, product["name"]),
+                                    use_container_width=True
+                                )
+
+                    # =========================
+                    # 💻 DESKTOP MODE (UNCHANGED)
+                    # =========================
+                    else:
+
                         st.markdown(
-                            f"<p style='text-align:center;font-size:20px'>{st.session_state[key]}</p>",
+                            f"""
+                            <div style="
+                                font-size:15px;
+                                font-weight:550;
+                                text-align:center;
+                                margin-top:-35px;
+                                margin-bottom:2px;
+                            ">
+                            {product['name'].replace("_"," ")}
+                            </div>
+                            """,
                             unsafe_allow_html=True
                         )
 
-                    with c3:
-                        st.button(
-                            "+",
-                            key=f"plus_{category}_{product['name']}",
-                            on_click=increase_qty,
-                            args=(key, product["name"]),
-                            use_container_width=True
-                        )
+                        st.image(img, use_column_width=True)
 
-        
+                        c1, c2, c3 = st.columns([1,1,1])
+
+                        with c1:
+                            st.button(
+                                "-",
+                                key=f"minus_{category}_{product['name']}",
+                                on_click=decrease_qty,
+                                args=(key, product["name"]),
+                                use_container_width=True
+                            )
+
+                        with c2:
+                            st.markdown(
+                                f"<p style='text-align:center;font-size:20px'>{st.session_state[key]}</p>",
+                                unsafe_allow_html=True
+                            )
+
+                        with c3:
+                            st.button(
+                                "+",
+                                key=f"plus_{category}_{product['name']}",
+                                on_click=increase_qty,
+                                args=(key, product["name"]),
+                                use_container_width=True
+                            )
+
 # =========================
 # Sidebar Cart
 # =========================
