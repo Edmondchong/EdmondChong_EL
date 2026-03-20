@@ -27,7 +27,7 @@ def decrease_qty(key, product_name):
 @st.cache_resource
 def load_image(path):
     img = Image.open(path)
-    return img.copy().resize((100,100))
+    return img.copy()   # ❌ 不要 resize
 
 
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="wide")
@@ -238,9 +238,9 @@ for category, product_list in products.items():
 
                     img = load_image(product["image"])
 
-                    img_size = 160 if st.session_state.get("mobile", False) else 100
+                    img_size = 220 if st.session_state.get("mobile", False) else 100
                     
-                    left_img, mid_img, right_img = st.columns([1,2,1])
+                    left_img, mid_img, right_img = st.columns([1,5,1])
 
                     with mid_img:
                         st.image(img, width=img_size)
