@@ -8,38 +8,40 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 
+def increase_qty(key, product_name):
+    if st.session_state[key] < 50:
+        st.session_state[key] += 1
+        st.session_state.cart[product_name] = st.session_state[key]
 
-@st.cache_data
+
+def decrease_qty(key, product_name):
+    if st.session_state[key] > 0:
+        st.session_state[key] -= 1
+
+        if st.session_state[key] > 0:
+            st.session_state.cart[product_name] = st.session_state[key]
+        elif product_name in st.session_state.cart:
+            del st.session_state.cart[product_name]
+
+
+@st.cache_resource
 def load_image(path):
     img = Image.open(path)
-    return img.resize((100,100))
+    return img.copy().resize((100,100))
 
 
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="wide")
 
 # -----------------------------
-# Detect Mobile Screen Automatically
+# Mobile Mode (Manual Toggle - Reliable)
 # -----------------------------
-st.markdown("""
-<script>
-function sendScreenWidth(){
-    const width = window.innerWidth;
-    const isMobile = width < 768;
-
-    const streamlitEvent = new CustomEvent("streamlit:setComponentValue", {
-        detail: {value: isMobile}
-    });
-
-    window.parent.document.dispatchEvent(streamlitEvent);
-}
-
-sendScreenWidth();
-window.addEventListener("resize", sendScreenWidth);
-</script>
-""", unsafe_allow_html=True)
-
 if "mobile" not in st.session_state:
     st.session_state.mobile = False
+
+st.session_state.mobile = st.sidebar.checkbox(
+    "📱 Mobile Mode",
+    value=st.session_state.mobile
+)
 
 # -----------------------------
 # UI Font Size
@@ -250,47 +252,30 @@ for category, product_list in products.items():
 
                     c1, c2, c3 = st.columns([1,1,1])
 
+                    # ✅ FIXED: buttons MUST be inside this block
                     with c1:
-
-                        if st.button(
+                        st.button(
                             "-",
                             key=f"minus_{category}_{product['name']}",
+                            on_click=decrease_qty,
+                            args=(key, product["name"]),
                             use_container_width=True
-                        ):
-
-                            if st.session_state[key] > 0:
-
-                                st.session_state[key] -= 1
-
-                                if st.session_state[key] > 0:
-                                    st.session_state.cart[product["name"]] = st.session_state[key]
-                                elif product["name"] in st.session_state.cart:
-                                    del st.session_state.cart[product["name"]]
-
-                                st.rerun()
+                        )
 
                     with c2:
-
                         st.markdown(
                             f"<p style='text-align:center;font-size:20px'>{st.session_state[key]}</p>",
                             unsafe_allow_html=True
                         )
 
                     with c3:
-
-                        if st.button(
+                        st.button(
                             "+",
                             key=f"plus_{category}_{product['name']}",
+                            on_click=increase_qty,
+                            args=(key, product["name"]),
                             use_container_width=True
-                        ):
-
-                            if st.session_state[key] < 50:
-
-                                st.session_state[key] += 1
-                                st.session_state.cart[product["name"]] = st.session_state[key]
-
-                                st.rerun()
-
+                        )
 
 # =========================
 # Mobile Sticky Cart Bar
