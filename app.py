@@ -240,17 +240,16 @@ for category, product_list in products.items():
                     st.markdown(
                         f"""
                         <div style="
-                            height:80px;
                             font-size:16px;
                             font-weight:500;
                             display:flex;
                             align-items:center;
                             justify-content:center;
                             text-align:center;
-                            padding-top:5px;
+                            padding-top:-15px;
                             margin-bottom:5px;
                         ">
-                        {product['name']}
+                        {product['name'].replace("_"," ")}
                         </div>
                         """,
                         unsafe_allow_html=True
