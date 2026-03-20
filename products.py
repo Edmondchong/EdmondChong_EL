@@ -5,13 +5,21 @@ def load_products():
     base_folder = "image"
     products = {}
 
-    for category in sorted(os.listdir(base_folder)):
+    # ✅ (folder_name, display_name)
+    category_order = [
+        ("Power System", "⚡ Power System"),
+        ("Video System", "🎥 Video System"),
+        ("Audio System", "🔊 Audio System"),
+        ("Lighting System", "💡 Lighting System"),
+    ]
 
-        category_path = os.path.join(base_folder, category)
+    for folder_name, display_name in category_order:
+
+        category_path = os.path.join(base_folder, folder_name)
 
         if os.path.isdir(category_path):
 
-            products[category] = []
+            products[display_name] = []
 
             for file in sorted(os.listdir(category_path)):
 
@@ -21,7 +29,7 @@ def load_products():
 
                     image_path = os.path.join(category_path, file)
 
-                    products[category].append({
+                    products[display_name].append({
                         "name": name,
                         "image": image_path
                     })

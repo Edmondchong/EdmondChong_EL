@@ -89,40 +89,23 @@ st.markdown("""
 }
 
 /* =============================
-   Mobile Sticky Cart Bar
+   FORCE 2 COLUMNS ON MOBILE
    ============================= */
 
-.mobile-cart-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #1f1f1f;
-    border-top: 2px solid #444;
-    padding: 12px 20px;
-    z-index: 9999;
+@media (max-width: 768px) {
+    div[data-testid="column"] {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+    }
 }
 
-.mobile-cart-inner {
-    max-width: 700px;
-    margin: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.mobile-cart-text {
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.mobile-cart-btn {
-    background-color: #ff8c00;
-    padding: 8px 16px;
-    border-radius: 6px;
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
+/* Optional: make images slightly smaller on mobile */
+@media (max-width: 768px) {
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
 }
 
 </style>
@@ -261,8 +244,8 @@ for category, product_list in products.items():
                     
                     left_img, mid_img, right_img = st.columns([1,5,1])
 
-                    with mid_img:
-                        st.image(img, use_column_width=True)
+                    
+                    st.image(img, use_column_width=True)
 
                     key = f"qty_{category}_{product['name']}"
 
@@ -296,34 +279,6 @@ for category, product_list in products.items():
                             use_container_width=True
                         )
 
-# =========================
-# Mobile Sticky Cart Bar
-# =========================
-
-if st.session_state.get("mobile", False):
-
-    total_items = sum(st.session_state.cart.values())
-
-    if total_items > 0:
-
-        st.markdown(
-            textwrap.dedent(f"""
-            <div class="mobile-cart-bar">
-                <div class="mobile-cart-inner">
-
-                    <div class="mobile-cart-text">
-                        🛒 {total_items} items in cart
-                    </div>
-
-                    <a href="#sidebar" class="mobile-cart-btn">
-                        Open Cart
-                    </a>
-
-                </div>
-            </div>
-            """),
-            unsafe_allow_html=True
-        )
         
 # =========================
 # Sidebar Cart
