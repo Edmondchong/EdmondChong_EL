@@ -246,7 +246,7 @@ for category, product_list in products.items():
                             align-items:center;
                             justify-content:center;
                             text-align:center;
-                            padding-top:-15px;
+                            padding-top:-55px;
                             margin-bottom:5px;
                         ">
                         {product['name'].replace("_"," ")}
