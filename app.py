@@ -223,7 +223,7 @@ for category, product_list in products.items():
                         f"""
                         <div style="
                             height:50px;
-                            font-size:18px;
+                            font-size:16px;
                             font-weight:700;
                             display:flex;
                             align-items:center;
@@ -238,7 +238,7 @@ for category, product_list in products.items():
 
                     img = load_image(product["image"])
 
-                    img_size = 120 if st.session_state.get("mobile", False) else 100
+                    img_size = 160 if st.session_state.get("mobile", False) else 100
                     
                     left_img, mid_img, right_img = st.columns([1,2,1])
 
