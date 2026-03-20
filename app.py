@@ -65,7 +65,7 @@ st.session_state.mobile = st.sidebar.checkbox(
 )
 
 # -----------------------------
-# UI Font Size
+# UI Font Size + Scroll + Highlight
 # -----------------------------
 st.markdown("""
 <style>
@@ -120,7 +120,45 @@ div[id] {
     scroll-margin-top: 80px;
 }
 
+/* =============================
+   HIGHLIGHT ANIMATION
+   ============================= */
+
+@keyframes highlightFade {
+    0%   { background-color: rgba(255, 255, 0, 0.6); }
+    100% { background-color: transparent; }
+}
+
+.highlight {
+    animation: highlightFade 1.5s ease-out;
+}
+
 </style>
+""", unsafe_allow_html=True)
+
+
+# -----------------------------
+# JS: Scroll + Highlight
+# -----------------------------
+st.markdown("""
+<script>
+function scrollAndHighlight(id) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+        // Force reflow (IMPORTANT for Streamlit)
+        el.classList.remove("highlight");
+        void el.offsetWidth;
+
+        el.classList.add("highlight");
+
+        setTimeout(() => {
+            el.classList.remove("highlight");
+        }, 1500);
+    }
+}
+</script>
 """, unsafe_allow_html=True)
 
 # -----------------------------
@@ -298,7 +336,6 @@ for category, product_list in products.items():
 # Sidebar Cart
 # =========================
 
-
 with st.sidebar:
     
     st.markdown("<a name='sidebar'></a>", unsafe_allow_html=True)
@@ -346,8 +383,8 @@ with st.sidebar:
                         product_anchor = item.replace(" ", "_")
 
                         st.markdown(f"""
-                        <a href="#{product_anchor}" style="text-decoration:none;">
-                            <div style="
+                        <div onclick="scrollAndHighlight('{product_anchor}')" 
+                             style="
                                 padding:10px;
                                 margin-bottom:8px;
                                 border-radius:10px;
@@ -356,17 +393,17 @@ with st.sidebar:
                                 display:flex;
                                 justify-content:space-between;
                                 align-items:center;
+                                cursor:pointer;
                             ">
-                                <div style="font-weight:600;">{item}</div>
-                                <div style="
-                                    font-size:15px;
-                                    color:#ffb84d;
-                                    font-weight:600;
-                                ">
-                                    x{qty}
-                                </div>
+                            <div style="font-weight:600;">{item}</div>
+                            <div style="
+                                font-size:15px;
+                                color:#ffb84d;
+                                font-weight:600;
+                            ">
+                                x{qty}
                             </div>
-                        </a>
+                        </div>
                         """, unsafe_allow_html=True)
 
         st.divider()
