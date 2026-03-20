@@ -467,7 +467,7 @@ with st.sidebar:
             order_data = {
                 "Region": region,
                 "Date": date_str,
-                "Items": [item.replace("_", " ") for item in st.session_state.cart.keys()],
+                "Items": list(st.session_state.cart.keys()),
                 "Quantity": list(st.session_state.cart.values())
             }
 
@@ -661,7 +661,7 @@ with st.sidebar:
 
                     for item, qty in zip(order["Items"], order["Quantity"]):
 
-                        product_name = item.replace(" ", "_")
+                        product_name = item
 
                         for category, product_list in products.items():
                             for product in product_list:
