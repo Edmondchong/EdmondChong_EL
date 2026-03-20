@@ -240,9 +240,9 @@ for category, product_list in products.items():
                     st.markdown(
                         f"""
                         <div style="
-                            height:5px;
+                            height:80px;
                             font-size:16px;
-                            font-weight:600;
+                            font-weight:500;
                             display:flex;
                             align-items:center;
                             justify-content:center;
