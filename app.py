@@ -27,7 +27,25 @@ def decrease_qty(key, product_name):
 @st.cache_resource
 def load_image(path):
     img = Image.open(path)
-    return img.copy()   # ❌ 不要 resize
+
+    # 转成 RGB（避免บาง图片报错）
+    img = img.convert("RGB")
+
+    # 获取尺寸
+    width, height = img.size
+
+    # 取最短边（裁剪成正方形）
+    min_dim = min(width, height)
+
+    # 中间裁剪
+    left = (width - min_dim) // 2
+    top = (height - min_dim) // 2
+    right = left + min_dim
+    bottom = top + min_dim
+
+    img = img.crop((left, top, right, bottom))
+
+    return img
 
 
 st.set_page_config(page_title="(XLFM) Technical Team Equipment List System", layout="wide")
