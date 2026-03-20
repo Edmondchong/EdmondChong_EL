@@ -1,23 +1,29 @@
-products = {
+import os
 
-    "Power List": [
-        {"name": "1.5mm_2Gang", "image": "image/1.5mm_2Gang.jpg"},
-        {"name": "1.5mm_Commando", "image": "image/1.5mm_Commando.jpg"},
-        {"name": "3.5mm_Commando", "image": "image/1.5mm_Commando.jpg"},
-        {"name": "4.5mm_Commando", "image": "image/1.5mm_Commando.jpg"},
-        {"name": "5.5mm_Commando", "image": "image/1.5mm_Commando.jpg"},
-        {"name": "6.5mm_Commando", "image": "image/1.5mm_Commando.jpg"},
-    ],
+def load_products():
 
-    "Audio List": [
-        {"name": "Audio_Cable", "image": "image/2.5mm_2Gang.jpg"},
-    ],
+    base_folder = "image"
+    products = {}
 
-    "Lighting List": [
-        {"name": "LED_Light", "image": "image/2.5mm_Commando.jpg"},
-    ],
+    for category in sorted(os.listdir(base_folder)):
 
-    "Video List": [
-        {"name": "HDMI_Cable", "image": "image/4mm_Commando.jpg"},
-    ]
-}
+        category_path = os.path.join(base_folder, category)
+
+        if os.path.isdir(category_path):
+
+            products[category] = []
+
+            for file in sorted(os.listdir(category_path)):
+
+                if file.lower().endswith((".jpg", ".png", ".jpeg")):
+
+                    name = os.path.splitext(file)[0].replace("_", " ")
+
+                    image_path = os.path.join(category_path, file)
+
+                    products[category].append({
+                        "name": name,
+                        "image": image_path
+                    })
+
+    return products
