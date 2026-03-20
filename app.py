@@ -100,12 +100,24 @@ st.markdown("""
     }
 }
 
-/* Optional: make images slightly smaller on mobile */
+/* Optional: make images responsive */
 @media (max-width: 768px) {
     img {
         max-width: 100% !important;
         height: auto !important;
     }
+}
+
+/* =============================
+   SMOOTH SCROLL + OFFSET
+   ============================= */
+
+html {
+    scroll-behavior: smooth;
+}
+
+div[id] {
+    scroll-margin-top: 80px;
 }
 
 </style>
@@ -220,8 +232,10 @@ for category, product_list in products.items():
             with cols[i % len(cols)]:
 
                 with st.container(border=True):
+                    
+                    anchor = product['name'].replace(" ", "_")
 
-                    st.markdown(f"<a name='{product['name']}'></a>", unsafe_allow_html=True)
+                    st.markdown(f"<div  id='{anchor}'></div>", unsafe_allow_html=True)
 
                     st.markdown(
                         f"""
