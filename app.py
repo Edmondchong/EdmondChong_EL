@@ -120,6 +120,36 @@ div[id] {
     scroll-margin-top: 80px;
 }
 
+/* =============================
+   STEP 2: ALIGNMENT FIX
+   ============================= */
+
+div[data-testid="column"] {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Reduce spacing */
+div[data-testid="stVerticalBlock"] > div {
+    gap: 4px !important;
+}
+
+/* =============================
+   STEP 3: CARD UI POLISH
+   ============================= */
+
+div[data-testid="stContainer"] {
+    border-radius: 12px !important;
+    padding: 8px !important;
+}
+
+/* Buttons nicer */
+button {
+    border-radius: 8px !important;
+    font-weight: bold !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -247,7 +277,7 @@ for category, product_list in products.items():
                     # =========================
                     if st.session_state.get("mobile", False):
 
-                        col1, col2, col3 = st.columns([1.2, 3, 2])
+                        col1, col2, col3 = st.columns([1.3, 2.7, 2])
 
                         with col1:
                             st.image(img, use_column_width=True)
@@ -267,7 +297,7 @@ for category, product_list in products.items():
                             )
 
                         with col3:
-                            b1, b2, b3 = st.columns([1,1,1])
+                            b1, b2, b3 = st.columns([1,1.2,1])
 
                             with b1:
                                 st.button(
