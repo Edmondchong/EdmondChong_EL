@@ -222,8 +222,8 @@ for category, product_list in products.items():
                     st.markdown(
                         f"""
                         <div style="
-                            height:50px;
-                            font-size:16px;
+                            height:60px;
+                            font-size:18px;
                             font-weight:700;
                             display:flex;
                             align-items:center;
@@ -243,7 +243,7 @@ for category, product_list in products.items():
                     left_img, mid_img, right_img = st.columns([1,5,1])
 
                     with mid_img:
-                        st.image(img, width=img_size)
+                        st.image(img, use_column_width=True)
 
                     key = f"qty_{category}_{product['name']}"
 
