@@ -31,7 +31,7 @@ def decrease_qty(key, product_name):
 def load_image(path):
     img = Image.open(path)
 
-    # 转成 RGB（避免บาง图片报错）
+    # 转成 RGB（避免图片报错）
     img = img.convert("RGB")
 
     # 获取尺寸
@@ -308,8 +308,8 @@ if st.session_state.get("mobile", False):
 
         st.markdown(
             f"""
-            <div class="mobile-cart-bar">
-                <div class="mobile-cart-inner">
+        <div class="mobile-cart-bar">
+            <div class="mobile-cart-inner">
 
                     <div class="mobile-cart-text">
                         🛒 {total_items} items in cart
@@ -319,9 +319,9 @@ if st.session_state.get("mobile", False):
                         Open Cart
                     </a>
 
-                </div>
             </div>
-            """,
+        </div>
+        """,
             unsafe_allow_html=True
         )
         
