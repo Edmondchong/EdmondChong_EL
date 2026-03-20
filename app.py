@@ -243,7 +243,7 @@ for category, product_list in products.items():
                             font-size:16px;
                             font-weight:500;
                             text-align:center;
-                            margin-top:-25px;
+                            margin-top:-35px;
                             margin-bottom:2px;
                         ">
                         {product['name'].replace("_"," ")}
