@@ -1,5 +1,5 @@
 import streamlit as st
-from products import products
+from product import load_products
 from PIL import Image
 import pandas as pd
 from io import BytesIO
@@ -7,6 +7,9 @@ from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
+
+# ✅ ADD THIS
+products = load_products()
 
 def increase_qty(key, product_name):
     if st.session_state[key] < 50:
