@@ -411,12 +411,12 @@ for category, product_list in products.items():
                                 use_container_width=True
                             )
                             
-        # =========================
-        # 🔥 SCROLL CLEANUP (ADD HERE)
-        # =========================
-        if st.session_state.get("scroll_done"):
-            del st.session_state.scroll_to
-            del st.session_state.scroll_done
+    # =========================
+    # 🔥 SCROLL CLEANUP (ADD HERE)
+    # =========================
+    if st.session_state.get("scroll_done"):
+        del st.session_state.scroll_to
+        del st.session_state.scroll_done
 
 # =========================
 # Sidebar Cart
