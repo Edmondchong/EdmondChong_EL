@@ -315,7 +315,8 @@ for category, product_list in products.items():
                                     max_value=200,
                                     step=1,
                                     key=key,
-                                    label_visibility="collapsed"
+                                    label_visibility="collapsed",
+                                    format="%d"
                                 )
 
                             with b3:
