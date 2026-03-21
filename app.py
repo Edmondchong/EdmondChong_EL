@@ -318,6 +318,12 @@ for category, product_list in products.items():
                                     label_visibility="collapsed",
                                     format="%d"
                                 )
+                                
+                                    # 🔥 ADD THIS (sync with cart)
+                                if qty > 0:
+                                    st.session_state.cart[product["name"]] = qty
+                                elif product["name"] in st.session_state.cart:
+                                    del st.session_state.cart[product["name"]]
 
                             with b3:
                                 st.button(
@@ -362,10 +368,22 @@ for category, product_list in products.items():
                             )
 
                         with c2:
-                            st.markdown(
-                                f"<p style='text-align:center;font-size:20px'>{st.session_state[key]}</p>",
-                                unsafe_allow_html=True
+                            qty = st.number_input(
+                                "",
+                                min_value=0,
+                                max_value=200,
+                                step=1,
+                                key=key,
+                                label_visibility="collapsed",
+                                format="%d"
                             )
+                                
+                                # Sync cart
+                            if qty > 0:
+                                st.session_state.cart[product["name"]] = qty
+                            elif product["name"] in st.session_state.cart:
+                                del st.session_state.cart[product["name"]]
+
 
                         with c3:
                             st.button(
