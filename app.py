@@ -271,10 +271,15 @@ for category, product_list in products.items():
 
                         st.markdown(f"""
                         <script>
-                        document.getElementById("{anchor}").scrollIntoView({{
-                            behavior: "smooth",
-                            block: "center"
-                        }});
+                        setTimeout(function() {{
+                            var el = document.getElementById("{anchor}");
+                            if (el) {{
+                                el.scrollIntoView({{
+                                    behavior: "smooth",
+                                    block: "center"
+                                }});
+                            }}
+                        }}, 300);
                         </script>
                         """, unsafe_allow_html=True)
 
