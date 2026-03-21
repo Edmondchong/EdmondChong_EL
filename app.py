@@ -309,9 +309,13 @@ for category, product_list in products.items():
                                 )
 
                             with b2:
-                                st.markdown(
-                                    f"<p style='text-align:center;font-size:16px'>{st.session_state[key]}</p>",
-                                    unsafe_allow_html=True
+                                qty = st.number_input(
+                                    "",
+                                    min_value=0,
+                                    max_value=200,
+                                    step=1,
+                                    key=key,
+                                    label_visibility="collapsed"
                                 )
 
                             with b3:
