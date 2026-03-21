@@ -693,7 +693,7 @@ with st.sidebar:
 
                     for item, qty in zip(order["Items"], order["Quantity"]):
 
-                        product_name = item
+                        product_name = item.replace(" ", "_")
 
                         for category, product_list in products.items():
                             for product in product_list:
