@@ -264,7 +264,24 @@ for category, product_list in products.items():
                 with st.container(border=True):
 
                     anchor = product['name'].replace(" ", "_")
-                    st.markdown(f"<div id='{anchor}'></div>", unsafe_allow_html=True)
+
+                    if "scroll_to" in st.session_state and st.session_state.scroll_to == product["name"]:
+
+                        st.markdown(f"<div id='{anchor}'></div>", unsafe_allow_html=True)
+
+                        st.markdown(f"""
+                        <script>
+                        document.getElementById("{anchor}").scrollIntoView({{
+                            behavior: "smooth",
+                            block: "center"
+                        }});
+                        </script>
+                        """, unsafe_allow_html=True)
+
+                        del st.session_state.scroll_to
+
+                    else:
+                        st.markdown(f"<div id='{anchor}'></div>", unsafe_allow_html=True)
 
                     key = f"qty_{category}_{product['name']}"
                     if key not in st.session_state:
@@ -445,29 +462,9 @@ with st.sidebar:
 
                         product_anchor = item.replace(" ", "_")
 
-                        st.markdown(f"""
-                        <a href="#{product_anchor}" style="text-decoration:none;">
-                            <div style="
-                                padding:10px;
-                                margin-bottom:8px;
-                                border-radius:10px;
-                                background-color:#1f1f1f;
-                                border:1px solid #333;
-                                display:flex;
-                                justify-content:space-between;
-                                align-items:center;
-                            ">
-                                <div style="font-weight:600;">{item}</div>
-                                <div style="
-                                    font-size:15px;
-                                    color:#ffb84d;
-                                    font-weight:600;
-                                ">
-                                    x{qty}
-                                </div>
-                            </div>
-                        </a>
-                        """, unsafe_allow_html=True)
+                        if st.button(f"{item}   x{qty}", key=f"jump_{item}", use_container_width=True):
+                            st.session_state.scroll_to = item
+                            st.rerun()
 
         st.divider()
 
