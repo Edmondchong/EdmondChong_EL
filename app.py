@@ -475,7 +475,7 @@ with st.sidebar:
                         product_anchor = item.replace(" ", "_")
 
                         if st.button(f"{item}   x{qty}", key=f"jump_{item}", use_container_width=True):
-                            st.session_state.scroll_to = item
+                            st.session_state.scroll_to = item.replace(" ", "_")
                             st.rerun()
 
         st.divider()
