@@ -265,7 +265,7 @@ for category, product_list in products.items():
 
                     anchor = product['name'].replace(" ", "_")
 
-                    if "scroll_to" in st.session_state and st.session_state.scroll_to == product["name"]:
+                    if "scroll_to" in st.session_state and st.session_state.scroll_to == anchor:
 
                         st.markdown(f"<div id='{anchor}'></div>", unsafe_allow_html=True)
 
